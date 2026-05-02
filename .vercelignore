@@ -1,9 +1,11 @@
 # Vercel uses this in preference to .gitignore.
-# We want data/*/buildings.geojson + data/stats.json uploaded,
-# but exclude the bulky intermediate files.
+# Production runs on tokyo.pmtiles (48MB) — drop per-ward GeoJSON to save bandwidth.
 data/*/udx
 data/*/codelists
 data/*/*.zip
 data/*/*.txt
+data/*/buildings.geojson
+data/all-buildings.ndjson
+data/tokyo.mbtiles
 .playwright-mcp
 *.log

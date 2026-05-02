@@ -1,7 +1,10 @@
 data/*
 !data/stats.json
+!data/tokyo.pmtiles
 *.zip
 *.gml
+*.mbtiles
+*.ndjson
 node_modules/
 .DS_Store
 .vercel

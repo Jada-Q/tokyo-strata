@@ -3,7 +3,11 @@
 import json
 from pathlib import Path
 
-WARDS = ['arakawa', 'bunkyo', 'shinjuku', 'chiyoda', 'shibuya', 'chuo', 'minato']
+WARDS = [
+    'chiyoda', 'chuo', 'minato', 'shinjuku', 'bunkyo', 'sumida', 'koto',
+    'shinagawa', 'meguro', 'ota', 'setagaya', 'shibuya', 'nakano', 'suginami',
+    'toshima', 'kita', 'arakawa', 'itabashi', 'nerima', 'adachi', 'katsushika', 'edogawa',
+]
 
 
 def stratum(fp, h):

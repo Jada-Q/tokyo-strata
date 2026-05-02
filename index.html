@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tokyo Strata · 都心 7 区 形態地層</title>
+<title>Tokyo Strata · 東京 22 区 形態地層</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -204,8 +204,8 @@
 
 <section id="cover">
   <div class="super">TOKYO STRATA · 2026</div>
-  <h1>都心 7 区<br>形 態 地 層</h1>
-  <div class="meta">耐火構造 × 高度<br>49 万棟の建物から読み解く<br>東京の都市考古学</div>
+  <h1>東京 22 区<br>形 態 地 層</h1>
+  <div class="meta">耐火構造 × 高度<br>290 万棟の建物から読み解く<br>東京の都市考古学</div>
   <div class="scroll-hint">SCROLL ↓</div>
 </section>
 
@@ -213,8 +213,8 @@
   <div class="text">
     <div class="super">序</div>
     <h2>形態は時代の<br>代理指標である</h2>
-    <p>東京の都心 7 区、49 万棟の建築物を耐火構造と高度の二軸で読み解いた地層図。建築年は記録されていないが、形態が時代の代理として浮かび上がる。</p>
-    <p>朽葉が古層、月白が現代層。皇居を中心に、北は荒川の下町、南は港区の海岸まで——一枚の地図に重なる東京の時間を読む。</p>
+    <p>東京 22 区、290 万棟の建築物を耐火構造と高度の二軸で読み解いた地層図。建築年は記録されていないが、形態が時代の代理として浮かび上がる。</p>
+    <p>朽葉が古層、月白が現代層。皇居を中心に、北は足立・葛飾の下町、南は大田の海岸、西は世田谷・練馬の郊外住宅地まで——一枚の地図に重なる東京の時間を読む。以下は焦点 7 区の編集の選。</p>
     <div class="palette">
       <span class="sw" style="background:#6e4c30"></span><span class="nm">朽葉</span><span class="dc">古き木造の街</span>
       <span class="sw" style="background:#b19a55"></span><span class="nm">利休茶</span><span class="dc">戦後の小楼</span>
@@ -342,13 +342,17 @@
   <h2>形 態 地 層 と は</h2>
   <p>色は耐火構造と高度の組み合わせから割り当てた、形態の世代を表す。朽葉は「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造。利休茶は耐火・準耐火の同低層——戦後の小楼。銀鼠は中層 10–30m、高度成長期以降の中規模ビル。月白は高層 30m 以上、バブル期以降の塔状建築。</p>
   <p>建築年は PLATEAU には掲載されていないため、形態を時代の代理指標とした。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる。</p>
-  <p class="small">データ：Project PLATEAU 千代田区・中央区・港区・新宿区・文京区・渋谷区・荒川区 2023 年度 CityGML（v4）／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／国土交通省／CC BY 4.0</p>
-  <p class="small">基礎図：MapLibre GL JS 4.7　·　明朝：Hiragino Mincho ProN</p>
+  <p class="small">データ：Project PLATEAU 東京 22 区（千代田・中央・港・新宿・文京・墨田・江東・品川・目黒・大田・世田谷・渋谷・中野・杉並・豊島・北・荒川・板橋・練馬・足立・葛飾・江戸川）2023–2024 年度 CityGML（v4 / 一部 v3）／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／国土交通省／CC BY 4.0</p>
+  <p class="small">配信：290 万棟 を PMTiles に圧縮（48 MB）。基礎図：MapLibre GL JS 4.7　·　明朝：Hiragino Mincho ProN　·　台東区は 2023 年度データセットが未公開のため除外。</p>
   <p class="small">自由探索モードは <a href="./explore.html">explore.html</a> に。</p>
 </section>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
 <script>
+const pmtilesProtocol = new pmtiles.Protocol();
+maplibregl.addProtocol('pmtiles', pmtilesProtocol.tile);
+const PMTILES_URL = 'pmtiles://./data/tokyo.pmtiles';
 const REGIONS = [
   { id: 'arakawa',  name: '荒川' },
   { id: 'bunkyo',   name: '文京' },
@@ -406,22 +410,18 @@ function makeMap(containerId, bbox) {
   return map;
 }
 
-async function loadWardLayer(map, wardId) {
-  const r = await fetch(`./data/${wardId}/buildings.geojson`);
-  const gj = await r.json();
-  map.addSource('bldg', { type: 'geojson', data: gj });
+function loadBuildingLayers(map) {
+  if (!map.getSource('bldg')) {
+    map.addSource('bldg', { type: 'vector', url: PMTILES_URL });
+  }
   map.addLayer({
-    id: 'bldg-fill', type: 'fill', source: 'bldg',
+    id: 'bldg-fill', type: 'fill', source: 'bldg', 'source-layer': 'buildings',
     paint: { 'fill-color': FILL_COLOR_EXPR, 'fill-opacity': 0.95 }
   });
   map.addLayer({
-    id: 'bldg-outline', type: 'line', source: 'bldg',
+    id: 'bldg-outline', type: 'line', source: 'bldg', 'source-layer': 'buildings',
     paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
   });
-  // Palace label on千代田 only (and intro overview)
-  if (wardId === 'chiyoda' || wardId === 'intro') {
-    addPalaceLabel(map);
-  }
 }
 
 function addPalaceLabel(map) {
@@ -471,8 +471,9 @@ async function initWardMap(wardId) {
   const map = makeMap(`map-${wardId}`, s.bbox);
   wardMaps[wardId] = map;
   return new Promise(resolve => {
-    map.on('load', async () => {
-      await loadWardLayer(map, wardId);
+    map.on('load', () => {
+      loadBuildingLayers(map);
+      if (wardId === 'chiyoda') addPalaceLabel(map);
       map.once('idle', () => resolve(map));
     });
   });
@@ -483,30 +484,13 @@ let introMapInst = null;
 async function initIntroMap() {
   if (initialized.has('intro')) return introMapInst;
   initialized.add('intro');
-  // overall bbox = union of all wards
-  let minx=180, miny=90, maxx=-180, maxy=-90;
-  for (const r of REGIONS) {
-    const [a,b,c,d] = stats[r.id].bbox;
-    if (a < minx) minx = a;
-    if (b < miny) miny = b;
-    if (c > maxx) maxx = c;
-    if (d > maxy) maxy = d;
-  }
-  const map = makeMap('map-intro', [minx, miny, maxx, maxy]);
+  // 22-ward bbox from PMTiles metadata
+  const fullBbox = [139.5621, 35.5234, 139.9175, 35.8174];
+  const map = makeMap('map-intro', fullBbox);
   introMapInst = map;
   return new Promise(resolve => {
-    map.on('load', async () => {
-      const all = { type: 'FeatureCollection', features: [] };
-      for (const r of REGIONS) {
-        const res = await fetch(`./data/${r.id}/buildings.geojson`);
-        const gj = await res.json();
-        all.features.push(...gj.features);
-      }
-      map.addSource('bldg', { type: 'geojson', data: all });
-      map.addLayer({ id: 'bldg-fill', type: 'fill', source: 'bldg',
-        paint: { 'fill-color': FILL_COLOR_EXPR, 'fill-opacity': 0.95 } });
-      map.addLayer({ id: 'bldg-outline', type: 'line', source: 'bldg',
-        paint: { 'line-color': '#0a0a0a', 'line-width': 0.2 } });
+    map.on('load', () => {
+      loadBuildingLayers(map);
       addPalaceLabel(map);
       map.once('idle', () => resolve(map));
     });

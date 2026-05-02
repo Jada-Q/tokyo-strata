@@ -1,58 +1,4 @@
 {
-  "arakawa": {
-    "count": 84869,
-    "bbox": [
-      139.7374,
-      35.7165,
-      139.8244,
-      35.7584
-    ],
-    "strata": {
-      "kuchiba": 42917,
-      "rikyu": 20425,
-      "ginnezu": 19879,
-      "tsukishiro": 1648,
-      "other": 0
-    },
-    "avg_height": 9.8,
-    "max_height": 154.4
-  },
-  "bunkyo": {
-    "count": 79455,
-    "bbox": [
-      139.7122,
-      35.6909,
-      139.7754,
-      35.7419
-    ],
-    "strata": {
-      "kuchiba": 31624,
-      "rikyu": 16687,
-      "ginnezu": 27168,
-      "tsukishiro": 3976,
-      "other": 0
-    },
-    "avg_height": 12.1,
-    "max_height": 234.1
-  },
-  "shinjuku": {
-    "count": 106588,
-    "bbox": [
-      139.6624,
-      35.6665,
-      139.7504,
-      35.7334
-    ],
-    "strata": {
-      "kuchiba": 40361,
-      "rikyu": 24026,
-      "ginnezu": 37585,
-      "tsukishiro": 4616,
-      "other": 0
-    },
-    "avg_height": 12.0,
-    "max_height": 243.3
-  },
   "chiyoda": {
     "count": 38833,
     "bbox": [
@@ -70,24 +16,6 @@
     },
     "avg_height": 19.4,
     "max_height": 264.6
-  },
-  "shibuya": {
-    "count": 90299,
-    "bbox": [
-      139.6497,
-      35.6331,
-      139.7258,
-      35.7002
-    ],
-    "strata": {
-      "kuchiba": 38164,
-      "rikyu": 17130,
-      "ginnezu": 31425,
-      "tsukishiro": 3580,
-      "other": 0
-    },
-    "avg_height": 11.6,
-    "max_height": 243.3
   },
   "chuo": {
     "count": 37193,
@@ -124,5 +52,347 @@
     },
     "avg_height": 16.1,
     "max_height": 332.1
+  },
+  "shinjuku": {
+    "count": 106588,
+    "bbox": [
+      139.6624,
+      35.6665,
+      139.7504,
+      35.7334
+    ],
+    "strata": {
+      "kuchiba": 40361,
+      "rikyu": 24026,
+      "ginnezu": 37585,
+      "tsukishiro": 4616,
+      "other": 0
+    },
+    "avg_height": 12.0,
+    "max_height": 243.3
+  },
+  "bunkyo": {
+    "count": 79455,
+    "bbox": [
+      139.7122,
+      35.6909,
+      139.7754,
+      35.7419
+    ],
+    "strata": {
+      "kuchiba": 31624,
+      "rikyu": 16687,
+      "ginnezu": 27168,
+      "tsukishiro": 3976,
+      "other": 0
+    },
+    "avg_height": 12.1,
+    "max_height": 234.1
+  },
+  "sumida": {
+    "count": 88203,
+    "bbox": [
+      139.7873,
+      35.6832,
+      139.8502,
+      35.7501
+    ],
+    "strata": {
+      "kuchiba": 42625,
+      "rikyu": 15358,
+      "ginnezu": 27502,
+      "tsukishiro": 2718,
+      "other": 0
+    },
+    "avg_height": 11.0,
+    "max_height": 634.9
+  },
+  "koto": {
+    "count": 87876,
+    "bbox": [
+      139.768,
+      35.5787,
+      139.8503,
+      35.7085
+    ],
+    "strata": {
+      "kuchiba": 33433,
+      "rikyu": 17280,
+      "ginnezu": 32653,
+      "tsukishiro": 4510,
+      "other": 0
+    },
+    "avg_height": 12.7,
+    "max_height": 211.6
+  },
+  "shinagawa": {
+    "count": 101212,
+    "bbox": [
+      139.6873,
+      35.5829,
+      139.7755,
+      35.6419
+    ],
+    "strata": {
+      "kuchiba": 47767,
+      "rikyu": 21807,
+      "ginnezu": 29002,
+      "tsukishiro": 2636,
+      "other": 0
+    },
+    "avg_height": 10.6,
+    "max_height": 157.1
+  },
+  "meguro": {
+    "count": 105371,
+    "bbox": [
+      139.6499,
+      35.5999,
+      139.7258,
+      35.667
+    ],
+    "strata": {
+      "kuchiba": 50012,
+      "rikyu": 31414,
+      "ginnezu": 22077,
+      "tsukishiro": 1868,
+      "other": 0
+    },
+    "avg_height": 9.7,
+    "max_height": 172.7
+  },
+  "ota": {
+    "count": 192968,
+    "bbox": [
+      139.6499,
+      35.5234,
+      139.8254,
+      35.6169
+    ],
+    "strata": {
+      "kuchiba": 117470,
+      "rikyu": 43672,
+      "ginnezu": 30165,
+      "tsukishiro": 1661,
+      "other": 0
+    },
+    "avg_height": 8.9,
+    "max_height": 116.1
+  },
+  "setagaya": {
+    "count": 273123,
+    "bbox": [
+      139.5747,
+      35.5916,
+      139.6877,
+      35.6836
+    ],
+    "strata": {
+      "kuchiba": 179797,
+      "rikyu": 64873,
+      "ginnezu": 27563,
+      "tsukishiro": 890,
+      "other": 0
+    },
+    "avg_height": 8.2,
+    "max_height": 149.9
+  },
+  "shibuya": {
+    "count": 90299,
+    "bbox": [
+      139.6497,
+      35.6331,
+      139.7258,
+      35.7002
+    ],
+    "strata": {
+      "kuchiba": 38164,
+      "rikyu": 17130,
+      "ginnezu": 31425,
+      "tsukishiro": 3580,
+      "other": 0
+    },
+    "avg_height": 11.6,
+    "max_height": 243.3
+  },
+  "nakano": {
+    "count": 149647,
+    "bbox": [
+      139.6122,
+      35.6748,
+      139.7001,
+      35.7419
+    ],
+    "strata": {
+      "kuchiba": 88412,
+      "rikyu": 36521,
+      "ginnezu": 23464,
+      "tsukishiro": 1250,
+      "other": 0
+    },
+    "avg_height": 8.9,
+    "max_height": 207.1
+  },
+  "suginami": {
+    "count": 220563,
+    "bbox": [
+      139.5748,
+      35.6582,
+      139.6753,
+      35.7335
+    ],
+    "strata": {
+      "kuchiba": 157993,
+      "rikyu": 43426,
+      "ginnezu": 18407,
+      "tsukishiro": 737,
+      "other": 0
+    },
+    "avg_height": 8.1,
+    "max_height": 100.6
+  },
+  "toshima": {
+    "count": 116243,
+    "bbox": [
+      139.6748,
+      35.708,
+      139.7627,
+      35.7503
+    ],
+    "strata": {
+      "kuchiba": 49176,
+      "rikyu": 30739,
+      "ginnezu": 33649,
+      "tsukishiro": 2679,
+      "other": 0
+    },
+    "avg_height": 10.5,
+    "max_height": 234.1
+  },
+  "kita": {
+    "count": 129091,
+    "bbox": [
+      139.6869,
+      35.7248,
+      139.7752,
+      35.7995
+    ],
+    "strata": {
+      "kuchiba": 62894,
+      "rikyu": 36680,
+      "ginnezu": 27619,
+      "tsukishiro": 1898,
+      "other": 0
+    },
+    "avg_height": 9.4,
+    "max_height": 178.3
+  },
+  "arakawa": {
+    "count": 84869,
+    "bbox": [
+      139.7374,
+      35.7165,
+      139.8244,
+      35.7584
+    ],
+    "strata": {
+      "kuchiba": 42917,
+      "rikyu": 20425,
+      "ginnezu": 19879,
+      "tsukishiro": 1648,
+      "other": 0
+    },
+    "avg_height": 9.8,
+    "max_height": 154.4
+  },
+  "itabashi": {
+    "count": 152255,
+    "bbox": [
+      139.6243,
+      35.7331,
+      139.7253,
+      35.7995
+    ],
+    "strata": {
+      "kuchiba": 75701,
+      "rikyu": 47047,
+      "ginnezu": 28185,
+      "tsukishiro": 1322,
+      "other": 0
+    },
+    "avg_height": 8.9,
+    "max_height": 129.7
+  },
+  "nerima": {
+    "count": 230922,
+    "bbox": [
+      139.5621,
+      35.7082,
+      139.6879,
+      35.7838
+    ],
+    "strata": {
+      "kuchiba": 170645,
+      "rikyu": 41386,
+      "ginnezu": 18232,
+      "tsukishiro": 659,
+      "other": 0
+    },
+    "avg_height": 8.0,
+    "max_height": 115.6
+  },
+  "adachi": {
+    "count": 221095,
+    "bbox": [
+      139.7249,
+      35.7328,
+      139.8629,
+      35.8174
+    ],
+    "strata": {
+      "kuchiba": 126897,
+      "rikyu": 65808,
+      "ginnezu": 27016,
+      "tsukishiro": 1374,
+      "other": 0
+    },
+    "avg_height": 8.3,
+    "max_height": 137.5
+  },
+  "katsushika": {
+    "count": 160279,
+    "bbox": [
+      139.8121,
+      35.7082,
+      139.8906,
+      35.8
+    ],
+    "strata": {
+      "kuchiba": 95292,
+      "rikyu": 44595,
+      "ginnezu": 19639,
+      "tsukishiro": 753,
+      "other": 0
+    },
+    "avg_height": 8.3,
+    "max_height": 138.5
+  },
+  "edogawa": {
+    "count": 180322,
+    "bbox": [
+      139.8247,
+      35.6389,
+      139.9175,
+      35.7585
+    ],
+    "strata": {
+      "kuchiba": 110779,
+      "rikyu": 42084,
+      "ginnezu": 26044,
+      "tsukishiro": 1415,
+      "other": 0
+    },
+    "avg_height": 8.8,
+    "max_height": 116.0
   }
 }

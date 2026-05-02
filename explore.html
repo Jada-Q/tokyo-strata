@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Tokyo Strata · 都心 7 区</title>
+<title>Tokyo Strata · 東京 22 区 EXPLORE</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<div id="title">TOKYO STRATA<b>都心 7 区 形態地層</b></div>
+<div id="title">TOKYO STRATA<b>東京 22 区 形態地層</b></div>
 <div id="subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
 <div id="legend">
   <div><span class="swatch" style="background:#6e4c30"></span><span class="cname">朽葉</span><span class="cdesc">古き木造の街</span></div>
@@ -72,15 +72,23 @@
 <div id="count"></div>
 <div id="map"></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
 <script>
+const pmtilesProtocol = new pmtiles.Protocol();
+maplibregl.addProtocol('pmtiles', pmtilesProtocol.tile);
+
 const REGIONS = [
-  { id: 'chiyoda',  name: '千代田' },
-  { id: 'chuo',     name: '中央' },
-  { id: 'minato',   name: '港' },
-  { id: 'shinjuku', name: '新宿' },
-  { id: 'bunkyo',   name: '文京' },
-  { id: 'shibuya',  name: '渋谷' },
-  { id: 'arakawa',  name: '荒川' },
+  { id: 'chiyoda',  name: '千代田' }, { id: 'chuo',     name: '中央' },
+  { id: 'minato',   name: '港' },     { id: 'shinjuku', name: '新宿' },
+  { id: 'bunkyo',   name: '文京' },   { id: 'sumida',   name: '墨田' },
+  { id: 'koto',     name: '江東' },   { id: 'shinagawa',name: '品川' },
+  { id: 'meguro',   name: '目黒' },   { id: 'ota',      name: '大田' },
+  { id: 'setagaya', name: '世田谷' }, { id: 'shibuya',  name: '渋谷' },
+  { id: 'nakano',   name: '中野' },   { id: 'suginami', name: '杉並' },
+  { id: 'toshima',  name: '豊島' },   { id: 'kita',     name: '北' },
+  { id: 'arakawa',  name: '荒川' },   { id: 'itabashi', name: '板橋' },
+  { id: 'nerima',   name: '練馬' },   { id: 'adachi',   name: '足立' },
+  { id: 'katsushika', name: '葛飾' }, { id: 'edogawa',  name: '江戸川' },
 ];
 
 const map = new maplibregl.Map({
@@ -90,8 +98,8 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#0a0a0a' } }]
   },
-  center: [139.7250, 35.6850],
-  zoom: 11.2,
+  center: [139.7400, 35.6700],
+  zoom: 10.5,
   pitch: 0,
   bearing: 0,
   attributionControl: false,
@@ -100,48 +108,28 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
 map.on('load', async () => {
-  const merged = { type: 'FeatureCollection', features: [] };
-  for (const region of REGIONS) {
-    try {
-      const r = await fetch(`./data/${region.id}/buildings.geojson`);
-      if (!r.ok) { console.warn(`skip ${region.id}: ${r.status}`); continue; }
-      const gj = await r.json();
-      gj.features.forEach(f => { f.properties.ward = region.id; });
-      merged.features.push(...gj.features);
-    } catch (e) {
-      console.warn(`load failed ${region.id}:`, e);
-    }
-  }
   document.getElementById('count').innerHTML =
-    '<b>' + merged.features.length.toLocaleString() + '</b> buildings<br>PLATEAU ' +
-    REGIONS.map(r => r.name).join('・') + ' 2023';
+    '<b>290 万棟</b><br>PLATEAU 東京 22 区 2023–24';
 
-  map.addSource('bldg', { type: 'geojson', data: merged });
+  map.addSource('bldg', { type: 'vector', url: 'pmtiles://./data/tokyo.pmtiles' });
 
-  // Outline thin for editorial feel
   map.addLayer({
-    id: 'bldg-fill',
-    type: 'fill',
-    source: 'bldg',
+    id: 'bldg-fill', type: 'fill', source: 'bldg', 'source-layer': 'buildings',
     paint: {
       'fill-color': [
         'case',
-        // 老町: その他/不明 + h < 10m
         ['all',
           ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
           ['<', ['coalesce', ['get', 'h'], 0], 10]
         ], '#6e4c30',
-        // 战后小楼: 耐火/準耐火 + h < 10m
         ['all',
           ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
           ['<', ['coalesce', ['get', 'h'], 0], 10]
         ], '#b19a55',
-        // 中高层: 10–30m
         ['all',
           ['>=', ['coalesce', ['get', 'h'], 0], 10],
           ['<', ['coalesce', ['get', 'h'], 0], 30]
         ], '#9d9c9d',
-        // 高/超高: >= 30m
         ['>=', ['coalesce', ['get', 'h'], 0], 30], '#e8ecef',
         '#3a3a3a'
       ],
@@ -150,9 +138,7 @@ map.on('load', async () => {
   });
 
   map.addLayer({
-    id: 'bldg-outline',
-    type: 'line',
-    source: 'bldg',
+    id: 'bldg-outline', type: 'line', source: 'bldg', 'source-layer': 'buildings',
     paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
   });
 
