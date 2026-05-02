@@ -1,0 +1,5 @@
+data/
+*.zip
+*.gml
+node_modules/
+.DS_Store
