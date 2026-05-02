@@ -454,22 +454,20 @@ function loadBuildingLayers(map) {
   });
 }
 
-function addPalaceLabel(map) {
-  const el = document.createElement('div');
-  el.className = 'palace-label';
-  el.textContent = '皇居';
-  new maplibregl.Marker({ element: el, anchor: 'center' })
-    .setLngLat([139.7528, 35.6852])
-    .addTo(map);
-}
-
 let landmarks = null;
 
-function addLandmarkLabels(map, wardId) {
-  if (!landmarks || !landmarks[wardId]) return;
-  for (const lm of landmarks[wardId]) {
+function addLandmarkLabels(map, bbox) {
+  if (!landmarks || !landmarks.landmarks) return;
+  for (const lm of landmarks.landmarks) {
+    if (bbox && (lm.lng < bbox[0] || lm.lng > bbox[2] || lm.lat < bbox[1] || lm.lat > bbox[3])) {
+      continue;  // outside this map's bounds — skip
+    }
     const el = document.createElement('div');
-    el.className = 'landmark-label ' + lm.type;
+    if (lm.type === 'palace') {
+      el.className = 'palace-label';
+    } else {
+      el.className = 'landmark-label ' + lm.type;
+    }
     el.textContent = lm.name;
     new maplibregl.Marker({ element: el, anchor: 'center' })
       .setLngLat([lm.lng, lm.lat])
@@ -517,8 +515,7 @@ async function initWardMap(wardId) {
   return new Promise(resolve => {
     map.on('load', () => {
       loadBuildingLayers(map);
-      if (wardId === 'chiyoda') addPalaceLabel(map);
-      addLandmarkLabels(map, wardId);
+      addLandmarkLabels(map, s.bbox);
       map.once('idle', () => resolve(map));
     });
   });
@@ -536,13 +533,7 @@ async function initIntroMap() {
   return new Promise(resolve => {
     map.on('load', () => {
       loadBuildingLayers(map);
-      addPalaceLabel(map);
-      // Add all landmarks (intro = 22-ward overview)
-      if (landmarks) {
-        for (const wardId of Object.keys(landmarks)) {
-          addLandmarkLabels(map, wardId);
-        }
-      }
+      addLandmarkLabels(map, null);  // null bbox = show all
       map.once('idle', () => resolve(map));
     });
   });

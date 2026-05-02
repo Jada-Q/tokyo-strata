@@ -1,200 +1,353 @@
 {
-  "chiyoda": [],
-  "chuo": [
+  "landmarks": [
+    {
+      "name": "皇居",
+      "lng": 139.7528,
+      "lat": 35.6852,
+      "type": "palace"
+    },
+    {
+      "name": "日比谷公園",
+      "lng": 139.7563205,
+      "lat": 35.674041,
+      "type": "park",
+      "primary_ward": "chiyoda"
+    },
+    {
+      "name": "北の丸公園",
+      "lng": 139.7510382,
+      "lat": 35.6918164,
+      "type": "park",
+      "primary_ward": "chiyoda"
+    },
+    {
+      "name": "国会議事堂",
+      "lng": 139.7450514,
+      "lat": 35.6758864,
+      "type": "other",
+      "primary_ward": "chiyoda"
+    },
+    {
+      "name": "東京駅",
+      "lng": 139.7645697,
+      "lat": 35.6802778,
+      "type": "other",
+      "primary_ward": "chiyoda"
+    },
     {
       "name": "浜離宮恩賜庭園",
       "lng": 139.7638239,
       "lat": 35.660176,
-      "type": "park"
-    }
-  ],
-  "minato": [
+      "type": "park",
+      "primary_ward": "chuo"
+    },
+    {
+      "name": "銀座四丁目交差点",
+      "lng": 139.7650359,
+      "lat": 35.6712197,
+      "type": "other",
+      "primary_ward": "chuo"
+    },
     {
       "name": "芝公園",
       "lng": 139.7466728,
       "lat": 35.6582563,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "minato"
     },
     {
       "name": "お台場海浜公園",
       "lng": 139.7773535,
       "lat": 35.631084,
-      "type": "park"
-    }
-  ],
-  "shinjuku": [
+      "type": "park",
+      "primary_ward": "minato"
+    },
+    {
+      "name": "青山霊園",
+      "lng": 139.7226503,
+      "lat": 35.6658106,
+      "type": "cemetery",
+      "primary_ward": "minato"
+    },
+    {
+      "name": "東京タワー",
+      "lng": 139.745536,
+      "lat": 35.6584491,
+      "type": "other",
+      "primary_ward": "minato"
+    },
     {
       "name": "新宿御苑",
       "lng": 139.7095466,
       "lat": 35.6850716,
-      "type": "park"
-    }
-  ],
-  "bunkyo": [
+      "type": "park",
+      "primary_ward": "shinjuku"
+    },
+    {
+      "name": "新宿中央公園",
+      "lng": 139.6895848,
+      "lat": 35.6900289,
+      "type": "park",
+      "primary_ward": "shinjuku"
+    },
     {
       "name": "小石川後楽園",
       "lng": 139.7491508,
       "lat": 35.7053632,
-      "type": "park"
-    }
-  ],
-  "sumida": [
+      "type": "park",
+      "primary_ward": "bunkyo"
+    },
+    {
+      "name": "小石川植物園",
+      "lng": 139.7441565,
+      "lat": 35.7202246,
+      "type": "park",
+      "primary_ward": "bunkyo"
+    },
+    {
+      "name": "東京ドーム",
+      "lng": 139.7519705,
+      "lat": 35.7055706,
+      "type": "other",
+      "primary_ward": "bunkyo"
+    },
     {
       "name": "隅田公園",
       "lng": 139.8031428,
       "lat": 35.7155065,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "sumida"
     },
     {
       "name": "東京スカイツリー",
       "lng": 139.8107141,
       "lat": 35.7100543,
-      "type": "other"
-    }
-  ],
-  "koto": [
+      "type": "other",
+      "primary_ward": "sumida"
+    },
     {
       "name": "木場公園",
       "lng": 139.8089289,
       "lat": 35.675872,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "koto"
     },
     {
       "name": "夢の島公園",
       "lng": 139.8279606,
       "lat": 35.6510927,
-      "type": "park"
-    }
-  ],
-  "shinagawa": [],
-  "meguro": [
+      "type": "park",
+      "primary_ward": "koto"
+    },
+    {
+      "name": "東京ビッグサイト",
+      "lng": 139.7978048,
+      "lat": 35.6320533,
+      "type": "other",
+      "primary_ward": "koto"
+    },
     {
       "name": "林試の森公園",
       "lng": 139.7026845,
       "lat": 35.6253469,
-      "type": "park"
-    }
-  ],
-  "ota": [
+      "type": "park",
+      "primary_ward": "shinagawa"
+    },
+    {
+      "name": "品川駅",
+      "lng": 139.730198,
+      "lat": 35.6092112,
+      "type": "other",
+      "primary_ward": "shinagawa"
+    },
+    {
+      "name": "目黒川",
+      "lng": 139.7124914,
+      "lat": 35.6320179,
+      "type": "river",
+      "primary_ward": "meguro"
+    },
     {
       "name": "羽田空港",
       "lng": 139.7760994,
       "lat": 35.5456924,
-      "type": "airport"
-    }
-  ],
-  "setagaya": [
+      "type": "airport",
+      "primary_ward": "ota"
+    },
+    {
+      "name": "多摩川",
+      "lng": 139.6687852,
+      "lat": 35.5896282,
+      "type": "river",
+      "primary_ward": "ota"
+    },
+    {
+      "name": "平和島公園",
+      "lng": 139.7426146,
+      "lat": 35.5821443,
+      "type": "park",
+      "primary_ward": "ota"
+    },
     {
       "name": "駒沢オリンピック公園",
       "lng": 139.6623012,
       "lat": 35.6251212,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "setagaya"
     },
     {
       "name": "砧公園",
       "lng": 139.6202541,
       "lat": 35.6303659,
-      "type": "park"
-    }
-  ],
-  "shibuya": [
+      "type": "park",
+      "primary_ward": "setagaya"
+    },
     {
       "name": "代々木公園",
       "lng": 139.6951716,
       "lat": 35.6714052,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "shibuya"
     },
     {
       "name": "明治神宮",
       "lng": 139.6996266,
       "lat": 35.6748417,
-      "type": "shrine"
-    }
-  ],
-  "nakano": [
+      "type": "shrine",
+      "primary_ward": "shibuya"
+    },
     {
       "name": "平和の森公園",
       "lng": 139.6620278,
       "lat": 35.7165358,
-      "type": "park"
-    }
-  ],
-  "suginami": [
+      "type": "park",
+      "primary_ward": "nakano"
+    },
+    {
+      "name": "哲学堂公園",
+      "lng": 139.673875,
+      "lat": 35.7220663,
+      "type": "park",
+      "primary_ward": "nakano"
+    },
     {
       "name": "善福寺公園",
       "lng": 139.5888336,
       "lat": 35.7161447,
-      "type": "park"
-    }
-  ],
-  "toshima": [
+      "type": "park",
+      "primary_ward": "suginami"
+    },
+    {
+      "name": "和田堀公園",
+      "lng": 139.6410671,
+      "lat": 35.6843217,
+      "type": "park",
+      "primary_ward": "suginami"
+    },
+    {
+      "name": "妙正寺公園",
+      "lng": 139.6181961,
+      "lat": 35.7172384,
+      "type": "park",
+      "primary_ward": "suginami"
+    },
     {
       "name": "雑司ヶ谷霊園",
       "lng": 139.720116,
       "lat": 35.722658,
-      "type": "cemetery"
-    }
-  ],
-  "kita": [
+      "type": "cemetery",
+      "primary_ward": "toshima"
+    },
+    {
+      "name": "池袋駅",
+      "lng": 139.7084087,
+      "lat": 35.7312289,
+      "type": "other",
+      "primary_ward": "toshima"
+    },
     {
       "name": "飛鳥山公園",
       "lng": 139.7390888,
       "lat": 35.7503352,
-      "type": "park"
-    }
-  ],
-  "arakawa": [
+      "type": "park",
+      "primary_ward": "kita"
+    },
+    {
+      "name": "赤羽自然観察公園",
+      "lng": 139.710945,
+      "lat": 35.7739122,
+      "type": "park",
+      "primary_ward": "kita"
+    },
     {
       "name": "隅田川",
       "lng": 139.8025293,
       "lat": 35.7386133,
-      "type": "river"
-    }
-  ],
-  "itabashi": [
+      "type": "river",
+      "primary_ward": "arakawa"
+    },
+    {
+      "name": "荒川自然公園",
+      "lng": 139.7870599,
+      "lat": 35.7415246,
+      "type": "park",
+      "primary_ward": "arakawa"
+    },
     {
       "name": "赤塚公園",
       "lng": 139.6564395,
       "lat": 35.7847747,
-      "type": "park"
-    }
-  ],
-  "nerima": [
+      "type": "park",
+      "primary_ward": "itabashi"
+    },
     {
       "name": "光が丘公園",
       "lng": 139.6304087,
       "lat": 35.7620201,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "nerima"
     },
     {
       "name": "石神井公園",
       "lng": 139.6061566,
       "lat": 35.7438271,
-      "type": "park"
-    }
-  ],
-  "adachi": [
+      "type": "park",
+      "primary_ward": "nerima"
+    },
+    {
+      "name": "武蔵関公園",
+      "lng": 139.5669627,
+      "lat": 35.7264851,
+      "type": "park",
+      "primary_ward": "nerima"
+    },
     {
       "name": "舎人公園",
       "lng": 139.7733087,
       "lat": 35.7986569,
-      "type": "park"
-    }
-  ],
-  "katsushika": [
+      "type": "park",
+      "primary_ward": "adachi"
+    },
     {
       "name": "水元公園",
       "lng": 139.8694186,
       "lat": 35.7878446,
-      "type": "park"
-    }
-  ],
-  "edogawa": [
+      "type": "park",
+      "primary_ward": "katsushika"
+    },
     {
       "name": "葛西臨海公園",
       "lng": 139.8594834,
       "lat": 35.6422106,
-      "type": "park"
+      "type": "park",
+      "primary_ward": "edogawa"
+    },
+    {
+      "name": "旧江戸川",
+      "lng": 139.8870176,
+      "lat": 35.6790785,
+      "type": "river",
+      "primary_ward": "edogawa"
     }
   ]
 }
