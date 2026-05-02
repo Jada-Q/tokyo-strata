@@ -124,7 +124,7 @@ map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-ri
 
 map.on('load', async () => {
   document.getElementById('count').innerHTML =
-    '<b>290 万棟</b><br>PLATEAU 東京 22 区 2023–24';
+    '<b>290 万棟</b><br>PLATEAU 東京 22 区 2023–24<br><span style="font-size:9px;letter-spacing:3px;color:#666;">by Jada Q · 2026</span>';
 
   map.addSource('bldg', { type: 'vector', url: 'pmtiles://./data/tokyo.pmtiles' });
 
