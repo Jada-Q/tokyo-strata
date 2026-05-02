@@ -118,3 +118,52 @@ See `screenshots/seven-wards.png`. The cross-ward comparison brings out the stra
 - **皇居** anchors center as the natural void; gray river arteries (神田川 / 隅田川 / 目黒川) emerge between strata.
 
 Performance: 491k features as merged GeoJSON (~195 MB) loads in ~5-10s on M-series Mac. For 23-ward expansion (~2M features), tile-ization (PMTiles or vector tiles) will be required.
+
+## 2026-05-02 — 22 wards via PMTiles (290 万棟)
+
+**Coverage**: 22 of 23 wards (台東 13106 has no PLATEAU 2023 dataset — excluded). 3 wards used 2024 data (sumida, shinagawa, suginami) since 2023 not published. 19 from 2023, 3 from 2024.
+
+**Total**: 2,900,190 buildings.
+
+**Tile pipeline** (`scripts/build-tiles.sh`):
+1. `merge_to_ndjson.py` → `data/all-buildings.ndjson` (1.2 GB)
+2. `tippecanoe -Z9 -z14 --drop-densest-as-needed --extend-zooms-if-still-dropping --simplification=8 --maximum-tile-bytes=500000` → `tokyo.mbtiles` (48 MB)
+3. `pmtiles convert` → `tokyo.pmtiles` (48 MB, 1038 tiles)
+
+**Compression ratio**: 1.2 GB raw NDJSON → 48 MB PMTiles (25×).
+
+**Browser delivery**: PMTiles uses HTTP byte-range requests; browser only fetches tiles intersecting the current viewport. Vercel `Range` header (HTTP 206) confirmed working.
+
+**Note**: First tile build at z15 produced 106 MB which exceeds Vercel Hobby per-file limit (100 MB). Rebuilt at z14 + simplification=8 + max-tile-bytes=500k → 48 MB.
+
+**Strata distribution by ward** (highest 朽葉 → lowest):
+| Ward | 朽葉% | 月白% | 平均高 |
+|---|---:|---:|---:|
+| 練馬 | 73.9 | 0.3 | 8.0 m |
+| 杉並 | 71.6 | 0.3 | 8.1 m |
+| 世田谷 | 65.8 | 0.3 | 8.2 m |
+| 江戸川 | 61.4 | 0.8 | 8.8 m |
+| 大田 | 60.9 | 0.9 | 8.9 m |
+| 葛飾 | 59.5 | 0.5 | 8.3 m |
+| 中野 | 59.1 | 0.8 | 8.9 m |
+| 足立 | 57.4 | 0.6 | 8.3 m |
+| 荒川 | 50.6 | 1.9 | 9.8 m |
+| 板橋 | 49.7 | 0.9 | 8.9 m |
+| 北 | 48.7 | 1.5 | 9.4 m |
+| 墨田 | 48.3 | 3.1 | 11.0 m |
+| 目黒 | 47.5 | 1.8 | 9.7 m |
+| 品川 | 47.2 | 2.6 | 10.6 m |
+| 渋谷 | 42.3 | 4.0 | 11.6 m |
+| 豊島 | 42.3 | 2.3 | 10.5 m |
+| 文京 | 39.8 | 5.0 | 12.1 m |
+| 江東 | 38.0 | 5.1 | 12.7 m |
+| 新宿 | 37.9 | 4.3 | 12.0 m |
+| 港 | 28.0 | 11.4 | 16.1 m |
+| 中央 | 26.6 | 16.7 | 18.3 m |
+| 千代田 | 21.2 | 18.5 | 19.4 m |
+
+Beautiful gradient: 都心 3 区（千代田・中央・港）月白比率最高、朽葉最低；郊外住宅区（練馬・杉並・世田谷）反之。
+
+Notable: 墨田区 max height = **634m = 東京スカイツリー** (the tallest 構造物 in 22-ward dataset).
+
+Live: https://tokyo-strata.vercel.app
