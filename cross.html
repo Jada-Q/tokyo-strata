@@ -163,6 +163,7 @@
   <a href="#corr">相関表</a>
   <a href="#categories">3 類分類</a>
   <a href="#hypothesis">仮説</a>
+  <a href="#case-katsushika">葛飾</a>
   <a href="#redteam">紅隊</a>
   <a href="#colophon">出典</a>
 </nav>
@@ -188,6 +189,7 @@
   <p>横軸：月白（高層 30m+）の比率。縦軸：人口の年次増減率。</p>
   <div class="chart" id="chart-main"></div>
   <p class="moment">皇居周辺の都心 3 区（千代田・中央・港）が右上に集中、郊外大区（練馬・世田谷・杉並）が左下に集中する。月白の存在自体が「人を呼ぶ建築物」になっているのか、それとも人口流入が塔を建てさせているのか——相関は因果を語らない。</p>
+  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 8px;">※ Pearson r ∈ [−1, +1]。社会科学では |r| &gt; 0.5 を中等、&gt; 0.7 を強相関とする。n=22 のため信頼区間は広い。</p>
 </section>
 
 <section id="corr">
@@ -231,6 +233,34 @@
   <p>もっとも興味深いのは <b>葛飾</b>——朽葉 59.5%（22 区中 6 番目に古い）、にもかかわらず price YoY +12.6%（22 区中前列）。形態がもっとも古い街に資本が入りつつある。</p>
   <p><b>練馬</b> は朽葉 73.9% で 22 区中もっとも古層率高い区が「early upgrade」signal を出している。郊外住宅地に新しい流れが見えるか。</p>
   <p class="moment">仮説：月白比率 &lt; 5% ＋ price YoY &gt; 6% ＋ early/active signal = 老町に資本が流入する初期段階。該当：葛飾・練馬・杉並・墨田。</p>
+</section>
+
+<section id="case-katsushika">
+  <div class="super">CASE STUDY · 葛飾</div>
+  <h2>形 態 が 変 わ る 前 に<br>価 格 が 動 く</h2>
+
+  <p>22 区の中で、形態と価格の解離がもっとも大きい区は <b>葛飾</b>。</p>
+
+  <table style="max-width: 520px; margin: 24px 0;">
+    <tbody>
+      <tr><td>朽葉率</td><td class="r">59.5% （22 区中 6 番目に古い）</td></tr>
+      <tr><td>価格 YoY</td><td class="r pos">+12.6% （23 区中 4 番目に高い）</td></tr>
+      <tr><td>月白率</td><td class="r">0.5% （22 区中 4 番目に低い）</td></tr>
+      <tr><td>signal</td><td class="r">early upgrade</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>矛盾点</b>——形態は最も古い下町の一つ、しかし価格上昇率は都心のタワー区（中央 +19.3%、港 +16.2%、渋谷 +15.4%）に追いつく勢い。建物はまだ変わっていないのに、価格が先に動いている。</p>
+
+  <h3>4 つの仮説（推測・未検証）</h3>
+  <p>① <b>都心高価の外溢</b>——千代田・中央・港 はすでに上昇しきり、資本が「比較的安い」下町を発見した可能性。<br>
+  ② <b>民泊・短期賃貸の収益期待</b>——柴又は『男はつらいよ』の聖地で観光地。短期賃貸の収益見込みが取得価格を押し上げる。<br>
+  ③ <b>外国人買い手の参入</b>——下町は entry barrier が低く、新規移民・海外投資家が買いやすい。<br>
+  ④ <b>形態先行のリーディングシグナル</b>——朽葉率が高い = まだ建て替わっていない = 12〜24 ヶ月後の月白塔建設の前兆かもしれない。</p>
+
+  <p class="moment">「上昇中の下町」6 区（葛飾・練馬・杉並・品川・渋谷・豊島）の中で、葛飾は<b>形態 / 価格 gap がもっとも大きい</b>——価格は先に動き、形態の更新はこれから。投资視角では early window、文化保育視角では「下町が静かに資本に書き換えられつつある」前兆。</p>
+
+  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 16px;">※ 仮説 ①〜④ は cross-section データと一般的な不動産論からの推測であり、各仮説の検証には登記情報・取引内訳・買い手国籍データなど追加調査が必要。</p>
 </section>
 
 <section id="redteam">
