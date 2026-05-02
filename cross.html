@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross · Tokyo Strata × UpgradeMap</title>
+
+<meta name="description" content="形態地層 × 上昇シグナル——東京 22 区の建築形態が現代の都市更新を予測する。月白% × 人口 YoY r=+0.86。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="形態地層 × 上昇シグナル · Tokyo Strata × UpgradeMap">
+<meta property="og:description" content="東京 22 区の建築形態が現代の都市更新と相関する——月白% × 人口 YoY r=+0.86。3 類分類と投资 sweet spot 仮説。">
+<meta property="og:image" content="https://tokyo-strata.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://tokyo-strata.vercel.app/cross">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="形態地層 × 上昇シグナル">
+<meta name="twitter:description" content="月白比率 × 人口 YoY r=+0.86。形態が時代を予測する。">
+<meta name="twitter:image" content="https://tokyo-strata.vercel.app/og-image.png">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; }
+  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  body {
+    background: #0a0a0a;
+    color: #c8c4be;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
+    font-feature-settings: "palt" 1;
+  }
+
+  section {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    padding: 80px 56px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .super { font-size: 11px; letter-spacing: 8px; color: #6b6660; margin-bottom: 18px; }
+  h1 { font-size: 44px; letter-spacing: 16px; font-weight: 400; color: #e8e4dc; line-height: 1.4; margin-bottom: 24px; max-width: 18em; }
+  h2 { font-size: 24px; letter-spacing: 8px; font-weight: 400; color: #e8e4dc; margin-bottom: 32px; }
+  h3 { font-size: 14px; letter-spacing: 4px; font-weight: 400; color: #d8d2c8; margin-top: 32px; margin-bottom: 16px; }
+
+  p {
+    font-size: 13px; line-height: 2.1; letter-spacing: 1.5px;
+    color: #b0aca4; max-width: 36em; margin-bottom: 18px;
+  }
+  p.lead { font-size: 16px; color: #d8d2c8; }
+  p.moment {
+    font-size: 12px; letter-spacing: 2px; color: #888;
+    padding-left: 14px; border-left: 1px solid #3a3631;
+    margin-top: 16px; line-height: 1.9;
+  }
+
+  /* Cover */
+  #cover {
+    align-items: center; justify-content: center; text-align: center;
+  }
+  #cover h1 {
+    font-size: 38px; letter-spacing: 14px; max-width: none;
+  }
+  #cover .meta { margin-top: 56px; font-size: 11px; letter-spacing: 4px; color: #555; line-height: 2; }
+  #cover .scroll-hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: 6px; color: #444; opacity: 0.7; }
+
+  /* Correlation table */
+  table {
+    width: 100%; max-width: 700px;
+    margin-top: 18px; font-size: 12px; letter-spacing: 1px;
+    border-collapse: collapse;
+  }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #2a2622; }
+  th { color: #6b6660; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; }
+  td { color: #b0aca4; }
+  td.r { text-align: right; font-family: 'Menlo', monospace; color: #d8d2c8; }
+  td.r.pos { color: #b19a55; }
+  td.r.neg { color: #6e4c30; }
+
+  /* Scatter chart */
+  .chart {
+    margin: 32px auto 12px;
+    width: 100%;
+    max-width: 880px;
+    align-self: center;
+  }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart-caption { font-size: 11px; color: #6b6660; letter-spacing: 1.5px; text-align: center; margin-top: 12px; }
+  .axis-label { fill: #6b6660; font-size: 11px; letter-spacing: 1.5px; }
+  .axis-line { stroke: #2a2622; stroke-width: 1; }
+  .point { stroke: #0a0a0a; stroke-width: 1; }
+  .point-label { fill: #b0aca4; font-size: 10px; font-family: 'Hiragino Mincho ProN', serif; letter-spacing: 0.5px; pointer-events: none; }
+
+  /* Categories */
+  .cat-block { margin: 32px 0; padding: 20px 24px; border: 1px solid #2a2622; border-radius: 2px; max-width: 720px; }
+  .cat-block h3 { margin-top: 0; }
+  .cat-block .wards { font-size: 14px; letter-spacing: 4px; color: #d8d2c8; margin-bottom: 12px; }
+  .cat-block p { font-size: 12px; margin-bottom: 0; max-width: none; }
+  .cat-mature .wards { color: #e8ecef; }
+  .cat-rising .wards { color: #b19a55; }
+  .cat-forgotten .wards { color: #6e4c30; }
+
+  /* Redteam */
+  .redteam {
+    margin-top: 24px; padding: 20px 24px;
+    background: rgba(245, 100, 100, 0.04);
+    border-left: 2px solid #6e3030;
+    max-width: 700px;
+  }
+  .redteam h3 { color: #c89c9c; margin-top: 0; }
+  .redteam ol { padding-left: 1.4em; font-size: 12px; line-height: 2; color: #a89a98; letter-spacing: 1px; }
+  .redteam li { margin-bottom: 12px; }
+  .redteam li b { color: #d8d2c8; font-weight: 400; letter-spacing: 1.5px; }
+
+  /* Colophon */
+  #colophon {
+    align-items: center; text-align: center;
+  }
+  #colophon h2 { font-size: 18px; letter-spacing: 8px; }
+  #colophon p { font-size: 12px; max-width: 36em; }
+  #colophon a { color: #888; text-decoration: none; border-bottom: 1px solid #3a3631; }
+  #colophon a:hover { color: #d8d2c8; }
+  #colophon .small { font-size: 10px; color: #555; letter-spacing: 2px; margin-top: 16px; }
+
+  /* TOC */
+  #toc {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 50;
+    display: flex; flex-direction: column; gap: 14px;
+    font-size: 10px; letter-spacing: 2px; color: #444;
+  }
+  #toc a { display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; }
+  #toc a::before { content: ''; width: 18px; height: 1px; background: currentColor; }
+  #toc a:hover { color: #d8d2c8; }
+  #toc a.active { color: #e8e4dc; }
+  #toc a.active::before { background: #e8e4dc; }
+
+  nav.crumb {
+    position: fixed; top: 24px; left: 32px; z-index: 50;
+    font-size: 10px; letter-spacing: 4px; color: #6b6660;
+  }
+  nav.crumb a { color: inherit; text-decoration: none; }
+  nav.crumb a:hover { color: #d8d2c8; }
+
+  @media print {
+    html { scroll-snap-type: none !important; }
+    body { background: #fff !important; color: #222 !important; }
+    section { min-height: auto; padding: 24mm 22mm; page-break-after: always; }
+    #toc, nav.crumb { display: none; }
+    h1, h2, h3, p, td { color: #222 !important; }
+    .axis-label { fill: #555 !important; }
+    .point-label { fill: #222 !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="crumb"><a href="/">← TOKYO STRATA</a></nav>
+
+<nav id="toc">
+  <a href="#cover">表紙</a>
+  <a href="#intro">序</a>
+  <a href="#scatter">主散布図</a>
+  <a href="#corr">相関表</a>
+  <a href="#categories">3 類分類</a>
+  <a href="#hypothesis">仮説</a>
+  <a href="#redteam">紅隊</a>
+  <a href="#colophon">出典</a>
+</nav>
+
+<section id="cover">
+  <div class="super">CROSS · 2026</div>
+  <h1>形 態 地 層<br>×<br>上 昇 シ グ ナ ル</h1>
+  <div class="meta">Tokyo Strata × UpgradeMap<br>22 区・290 万棟 × 不動産価格 × 人口動態</div>
+  <div class="scroll-hint">SCROLL ↓</div>
+</section>
+
+<section id="intro">
+  <div class="super">序</div>
+  <h2>形態は時代を<br>予測する</h2>
+  <p class="lead">Tokyo Strata の 4 色形態地層と UpgradeMap の上昇シグナルを 22 区で交差させたところ、形態が現在進行形の都市変容と統計的に強く相関することが判明した。</p>
+  <p>もっとも強い軸：<b>月白比率 × 人口 YoY、Pearson r = +0.86</b>。現代塔の多い区ほど、人口流入が著しい。</p>
+  <p>形態地層は単なる「過去の積層」ではなく、現代の不動産・人口動態を予測する代理指標として機能する——それが今回の発見である。</p>
+</section>
+
+<section id="scatter">
+  <div class="super">主散布図</div>
+  <h2>月白% × 人口 YoY</h2>
+  <p>横軸：月白（高層 30m+）の比率。縦軸：人口の年次増減率。</p>
+  <div class="chart" id="chart-main"></div>
+  <p class="moment">皇居周辺の都心 3 区（千代田・中央・港）が右上に集中、郊外大区（練馬・世田谷・杉並）が左下に集中する。月白の存在自体が「人を呼ぶ建築物」になっているのか、それとも人口流入が塔を建てさせているのか——相関は因果を語らない。</p>
+</section>
+
+<section id="corr">
+  <div class="super">相関表</div>
+  <h2>Pearson r ランキング</h2>
+  <p>Strata 軸（朽葉・利休茶・銀鼠・月白・平均高）と UpgradeMap 軸（upgrade score・price YoY・pop YoY）の全組み合わせの Pearson 相関係数。22 区サンプル。</p>
+  <table id="corr-table">
+    <thead><tr><th>軸</th><th style="text-align:right;">r</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="moment">月白系（現代塔）はすべての UpgradeMap 軸と正相関、朽葉系（古層）はすべて負相関。形態地層のグラデーションが、そのまま都市更新のグラデーションに対応する。</p>
+</section>
+
+<section id="categories">
+  <div class="super">3 類 分 類</div>
+  <h2>22 区を 3 つに 分 け る</h2>
+  <p>形態と signal の組み合わせから、22 区はおおよそ 3 つに分類できる。</p>
+
+  <div class="cat-block cat-mature">
+    <h3>成熟した都心</h3>
+    <div class="wards" id="cat-mature-wards">—</div>
+    <p>月白比率 11–18%、active signal、価格上昇 +11〜19%、人口流入 +7〜20%。すでに升级した区——投资窗口は収斂。</p>
+  </div>
+
+  <div class="cat-block cat-rising">
+    <h3>上昇中の下町</h3>
+    <div class="wards" id="cat-rising-wards">—</div>
+    <p>朽葉比率 40〜74% という古層の多さに反して、upgrade score &gt; 65、価格上昇 &gt; 6%。朽葉的城市基盤に新しい資本が注入されている。投资 sweet spot 候補。</p>
+  </div>
+
+  <div class="cat-block cat-forgotten">
+    <h3>忘れられた下町</h3>
+    <div class="wards" id="cat-forgotten-wards">—</div>
+    <p>朽葉比率 57〜61%、score &lt; 65、価格上昇 &lt; 5%。古層が支配的だが UpgradeMap シグナルは弱い。「進化を待っている」区——あるいは中立に「低 momentum 高古層」と読むべき。</p>
+  </div>
+</section>
+
+<section id="hypothesis">
+  <div class="super">投资 仮説</div>
+  <h2>下 町 に 資 本 が 流 入 す る 初 期</h2>
+  <p>もっとも興味深いのは <b>葛飾</b>——朽葉 59.5%（22 区中 6 番目に古い）、にもかかわらず price YoY +12.6%（22 区中前列）。形態がもっとも古い街に資本が入りつつある。</p>
+  <p><b>練馬</b> は朽葉 73.9% で 22 区中もっとも古層率高い区が「early upgrade」signal を出している。郊外住宅地に新しい流れが見えるか。</p>
+  <p class="moment">仮説：月白比率 &lt; 5% ＋ price YoY &gt; 6% ＋ early/active signal = 老町に資本が流入する初期段階。該当：葛飾・練馬・杉並・墨田。</p>
+</section>
+
+<section id="redteam">
+  <div class="super">紅隊（自検）</div>
+  <h2>こ の 分 析 の 限 界</h2>
+  <div class="redteam">
+    <h3>5 つの caveat</h3>
+    <ol>
+      <li><b>時間窓不一致</b>——Strata は PLATEAU 2023–24 の静的形態、UpgradeMap は最新の価格・人口動態。「形態が升值を予測する」と言うには時系列追跡が必要。今回は cross-section。</li>
+      <li><b>base effect</b>——朽葉率高い郊外大区は人口絶対数も多く、価格が低い base から％増加が高く見える。「老町升级」と読むより「低価帯の自然な成長」の可能性。</li>
+      <li><b>n=22 の統計力</b>——r=+0.86 は強相関だが、n=22 では信頼区間が広い。複数年データで再検証が必要。</li>
+      <li><b>「忘れられた」のラベル恣意性</b>——大田・江戸川は元々住宅密度高い「成熟した郊外」。「忘れられた」と読むのは余計な物語化。中立に「低 momentum 高古層」と呼ぶべき。</li>
+      <li><b>causation ≠ correlation</b>——r=+0.86 は「塔が人を呼ぶ」とも「人が塔を建てる」とも、「両者が共通の第三因子（駅近・再開発計画）の結果」とも読める。</li>
+    </ol>
+  </div>
+</section>
+
+<section id="colophon">
+  <div class="super">出典</div>
+  <h2>データ と 手 法</h2>
+  <p><b>Tokyo Strata</b>: PLATEAU 2023–24 CityGML, 22 区, 290 万棟（form classification by 耐火構造 × 高度）<br>
+  <b>UpgradeMap</b>: reinfolib 成交价 + e-Stat 人口統計, 23 区<br>
+  <b>交差</b>: 22 区（台東は Strata 未収）<br>
+  <b>手法</b>: Pearson 相関 + threshold 分類</p>
+  <p class="small">詳細: <a href="https://github.com/...">cross-report.md</a> · <a href="./data/cross.json">cross.json</a> · <a href="./tokyo-strata.pdf">PDF</a></p>
+  <p class="small"><a href="/">主編集 →</a> · <a href="/about">about</a> · <a href="/explore">explore</a> · <a href="https://upgrademap.vercel.app/" target="_blank">UpgradeMap →</a></p>
+</section>
+
+<script>
+const STRATUM_COLORS = {
+  mature:    '#e8ecef',
+  rising:    '#b19a55',
+  forgotten: '#6e4c30',
+  other:     '#9d9c9d',
+};
+
+function classify(w) {
+  if (w.tsukishiro > 10 && (w.signal === 'active' || w.signal === 'mature')) return 'mature';
+  if (w.kuchiba > 40 && w.score > 65 && w.price_yoy > 6) return 'rising';
+  if (w.kuchiba > 50 && w.score < 65 && w.price_yoy < 5) return 'forgotten';
+  return 'other';
+}
+
+function renderScatter(containerId, wards, xKey, yKey, xLabel, yLabel) {
+  const W = 880, H = 480;
+  const M = { l: 70, r: 30, t: 30, b: 60 };
+  const xs = wards.map(w => w[xKey]);
+  const ys = wards.map(w => w[yKey]);
+  const xmin = Math.min(...xs, 0), xmax = Math.max(...xs);
+  const ymin = Math.min(...ys, 0), ymax = Math.max(...ys);
+  const xPad = (xmax - xmin) * 0.05, yPad = (ymax - ymin) * 0.08;
+  const x0 = xmin - xPad, x1 = xmax + xPad;
+  const y0 = ymin - yPad, y1 = ymax + yPad;
+  const sx = v => M.l + (v - x0) / (x1 - x0) * (W - M.l - M.r);
+  const sy = v => H - M.b - (v - y0) / (y1 - y0) * (H - M.t - M.b);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`;
+  // axes
+  svg += `<line class="axis-line" x1="${M.l}" y1="${H-M.b}" x2="${W-M.r}" y2="${H-M.b}"/>`;
+  svg += `<line class="axis-line" x1="${M.l}" y1="${M.t}" x2="${M.l}" y2="${H-M.b}"/>`;
+  // x ticks
+  const xTicks = 5, yTicks = 5;
+  for (let i = 0; i <= xTicks; i++) {
+    const v = x0 + (x1 - x0) * (i / xTicks);
+    const x = sx(v);
+    svg += `<line class="axis-line" x1="${x}" y1="${H-M.b}" x2="${x}" y2="${H-M.b+5}"/>`;
+    svg += `<text class="axis-label" x="${x}" y="${H-M.b+22}" text-anchor="middle">${v.toFixed(0)}</text>`;
+  }
+  for (let i = 0; i <= yTicks; i++) {
+    const v = y0 + (y1 - y0) * (i / yTicks);
+    const y = sy(v);
+    svg += `<line class="axis-line" x1="${M.l-5}" y1="${y}" x2="${M.l}" y2="${y}"/>`;
+    svg += `<text class="axis-label" x="${M.l-10}" y="${y+4}" text-anchor="end">${v.toFixed(0)}</text>`;
+  }
+  // axis labels
+  svg += `<text class="axis-label" x="${(W-M.l-M.r)/2 + M.l}" y="${H-12}" text-anchor="middle">${xLabel}</text>`;
+  svg += `<text class="axis-label" x="${20}" y="${(H-M.t-M.b)/2 + M.t}" text-anchor="middle" transform="rotate(-90 20 ${(H-M.t-M.b)/2 + M.t})">${yLabel}</text>`;
+  // points
+  for (const w of wards) {
+    const x = sx(w[xKey]), y = sy(w[yKey]);
+    const r = 6;
+    const c = STRATUM_COLORS[classify(w)] || STRATUM_COLORS.other;
+    svg += `<circle class="point" cx="${x}" cy="${y}" r="${r}" fill="${c}" opacity="0.85"/>`;
+    svg += `<text class="point-label" x="${x+10}" y="${y+4}">${w.jp}</text>`;
+  }
+  svg += `</svg>`;
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+function renderCorrTable(corr) {
+  const rows = Object.entries(corr).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+  const tbody = document.querySelector('#corr-table tbody');
+  tbody.innerHTML = rows.map(([k, v]) => {
+    const cls = v > 0 ? 'pos' : 'neg';
+    return `<tr><td>${k}</td><td class="r ${cls}">${v >= 0 ? '+' : ''}${v.toFixed(3)}</td></tr>`;
+  }).join('');
+}
+
+function renderCategories(wards) {
+  const cats = { mature: [], rising: [], forgotten: [] };
+  for (const w of wards) {
+    const c = classify(w);
+    if (cats[c]) cats[c].push(w.jp);
+  }
+  document.getElementById('cat-mature-wards').textContent = cats.mature.join(' · ');
+  document.getElementById('cat-rising-wards').textContent = cats.rising.join(' · ');
+  document.getElementById('cat-forgotten-wards').textContent = cats.forgotten.join(' · ');
+}
+
+(async function () {
+  const data = await (await fetch('./data/cross.json')).json();
+  renderScatter('chart-main', data.wards, 'tsukishiro', 'pop_yoy', '月白% (高層 30m+)', '人口 YoY %');
+  renderCorrTable(data.correlations);
+  renderCategories(data.wards);
+
+  // TOC active
+  const tocLinks = document.querySelectorAll('#toc a');
+  const sections = [...document.querySelectorAll('section')];
+  const obs = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    }
+  }, { threshold: 0.5 });
+  sections.forEach(s => obs.observe(s));
+})();
+</script>
+</body>
+</html>
