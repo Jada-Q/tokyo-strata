@@ -1,5 +1,7 @@
 # tokyo-strata
 
+**Live**: https://tokyo-strata.vercel.app
+
 PoC: visualize Tokyo's building strata as an editorial map (NHK-style city archaeology).
 
 ## Status
