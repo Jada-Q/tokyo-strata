@@ -155,6 +155,19 @@
     text-shadow: 0 0 8px rgba(0,0,0,0.6);
   }
 
+  /* === LANDMARK LABEL (parks / rivers / shrines / etc) === */
+  .landmark-label {
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    color: #5f5852; font-size: 10px; letter-spacing: 3px;
+    pointer-events: none; opacity: 0.78;
+    text-shadow: 0 0 6px rgba(0,0,0,0.75), 0 0 2px rgba(0,0,0,0.9);
+    white-space: nowrap;
+  }
+  .landmark-label.river { color: #5d6770; letter-spacing: 4px; }
+  .landmark-label.shrine { color: #6e5856; }
+  .landmark-label.cemetery { color: #58524e; }
+  .landmark-label.airport, .landmark-label.other { color: #5f5852; }
+
   /* Section index in fixed right edge */
   #toc {
     position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 50;
@@ -450,6 +463,20 @@ function addPalaceLabel(map) {
     .addTo(map);
 }
 
+let landmarks = null;
+
+function addLandmarkLabels(map, wardId) {
+  if (!landmarks || !landmarks[wardId]) return;
+  for (const lm of landmarks[wardId]) {
+    const el = document.createElement('div');
+    el.className = 'landmark-label ' + lm.type;
+    el.textContent = lm.name;
+    new maplibregl.Marker({ element: el, anchor: 'center' })
+      .setLngLat([lm.lng, lm.lat])
+      .addTo(map);
+  }
+}
+
 function fillDataCard(card, ward) {
   const s = stats[ward];
   const total = s.count;
@@ -491,6 +518,7 @@ async function initWardMap(wardId) {
     map.on('load', () => {
       loadBuildingLayers(map);
       if (wardId === 'chiyoda') addPalaceLabel(map);
+      addLandmarkLabels(map, wardId);
       map.once('idle', () => resolve(map));
     });
   });
@@ -509,6 +537,12 @@ async function initIntroMap() {
     map.on('load', () => {
       loadBuildingLayers(map);
       addPalaceLabel(map);
+      // Add all landmarks (intro = 22-ward overview)
+      if (landmarks) {
+        for (const wardId of Object.keys(landmarks)) {
+          addLandmarkLabels(map, wardId);
+        }
+      }
       map.once('idle', () => resolve(map));
     });
   });
@@ -535,6 +569,12 @@ window.preparePrint = async function () {
 
 (async function () {
   stats = await (await fetch('./data/stats.json')).json();
+  try {
+    landmarks = await (await fetch('./data/landmarks.json')).json();
+  } catch (e) {
+    console.warn('landmarks not loaded:', e);
+    landmarks = {};
+  }
 
   // Fill all data cards now
   document.querySelectorAll('[data-ward-stats]').forEach(card => {

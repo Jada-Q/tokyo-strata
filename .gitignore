@@ -2,6 +2,7 @@ data/*
 !data/stats.json
 !data/tokyo.pmtiles
 !data/cross.json
+!data/landmarks.json
 *.zip
 *.gml
 *.mbtiles
