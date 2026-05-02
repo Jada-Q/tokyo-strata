@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Tokyo Strata</title>
+
+<meta name="description" content="Tokyo Strata について——東京 22 区・290 万棟の建築物を 4 色の形態地層として読み解いた都市考古地図。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="About · Tokyo Strata">
+<meta property="og:description" content="東京 22 区・290 万棟の建築を 4 色の形態地層として読み解いた都市考古地図。プロジェクト概要。">
+<meta property="og:image" content="https://tokyo-strata.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://tokyo-strata.vercel.app/about">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About · Tokyo Strata">
+<meta name="twitter:description" content="東京 22 区・290 万棟の建築を 4 色の形態地層として読み解いた都市考古地図。プロジェクト概要。">
+<meta name="twitter:image" content="https://tokyo-strata.vercel.app/og-image.png">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; }
+  body {
+    background: #0a0a0a;
+    color: #c8c4be;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
+    font-feature-settings: "palt" 1;
+    line-height: 2;
+    min-height: 100vh;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 100px 32px 120px;
+  }
+
+  .super { font-size: 11px; letter-spacing: 8px; color: #6b6660; margin-bottom: 18px; }
+  h1 {
+    font-size: 36px; letter-spacing: 12px; font-weight: 400;
+    color: #e8e4dc; line-height: 1.4; margin-bottom: 60px;
+  }
+  h2 {
+    font-size: 14px; letter-spacing: 6px; font-weight: 400;
+    color: #d8d2c8; margin-top: 64px; margin-bottom: 24px;
+    padding-bottom: 8px; border-bottom: 1px solid #2a2622;
+  }
+  p {
+    font-size: 14px; letter-spacing: 1.5px; line-height: 2.1;
+    color: #b0aca4; margin-bottom: 22px;
+    text-align: justify;
+  }
+  p.lead {
+    font-size: 16px; line-height: 2;
+    color: #d8d2c8;
+  }
+  hr {
+    border: none; border-top: 1px solid #2a2622;
+    margin: 56px 0;
+  }
+
+  .palette {
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: 14px 70px 1fr;
+    gap: 8px 16px; align-items: center;
+    font-size: 12px; letter-spacing: 1.5px;
+  }
+  .palette .sw { width: 14px; height: 14px; }
+  .palette .nm { color: #d8d2c8; letter-spacing: 3px; }
+  .palette .dc { color: #777; }
+
+  table {
+    width: 100%;
+    margin: 24px 0;
+    font-size: 12px; letter-spacing: 1px;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #2a2622;
+  }
+  th {
+    color: #6b6660; font-weight: 400;
+    text-transform: uppercase; letter-spacing: 2px;
+    font-size: 10px;
+  }
+  td { color: #b0aca4; }
+  td.num { text-align: right; color: #d8d2c8; }
+
+  .meta-block {
+    font-size: 11px; letter-spacing: 1.5px; color: #777;
+    line-height: 1.9;
+  }
+  .meta-block b { color: #b0aca4; font-weight: 400; }
+
+  a { color: #b0aca4; text-decoration: none; border-bottom: 1px solid #3a3631; }
+  a:hover { color: #e8e4dc; border-color: #e8e4dc; }
+
+  nav.crumb {
+    position: fixed; top: 24px; left: 32px;
+    font-size: 10px; letter-spacing: 4px; color: #6b6660;
+  }
+  nav.crumb a {
+    color: inherit; border: none;
+  }
+  nav.crumb a:hover { color: #d8d2c8; }
+
+  /* Print */
+  @page { size: A4 portrait; margin: 24mm 22mm; }
+  @media print {
+    body { background: #fff !important; color: #222 !important; -webkit-print-color-adjust: exact; }
+    main { padding: 0; max-width: none; }
+    .super, h1, h2, p, .meta-block { color: #222 !important; }
+    h2 { border-bottom-color: #999 !important; }
+    table th, table td { border-bottom-color: #ccc !important; }
+    nav.crumb { display: none; }
+    a { color: #555 !important; border-bottom-color: #999 !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="crumb"><a href="/">← TOKYO STRATA</a></nav>
+
+<main>
+  <div class="super">ABOUT</div>
+  <h1>形 態 地 層 と は</h1>
+
+  <p class="lead">Tokyo Strata は、東京 22 区・290 万棟の建築物を「耐火構造 × 高度」の二軸で読み解いた都市考古地図です。</p>
+
+  <p>Project PLATEAU 2023–24 の 3D 都市モデルから footprint・用途・構造・高度を抽出し、4 色の形態地層として描きました——朽葉が古層、月白が現代層。建築年は記録されていませんが、形態が時代の代理として浮かび上がります。</p>
+
+  <p>皇居を中心に、北は荒川・足立の下町、南は大田の海岸、西は世田谷・練馬の郊外住宅地まで——一枚の地図に重なる東京の時間を読む試みです。</p>
+
+  <h2>4 色 の 凡 例</h2>
+  <div class="palette">
+    <span class="sw" style="background:#6e4c30"></span><span class="nm">朽葉</span><span class="dc">「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造の街。</span>
+    <span class="sw" style="background:#b19a55"></span><span class="nm">利休茶</span><span class="dc">耐火・準耐火の同低層——戦後の小楼に対応する。</span>
+    <span class="sw" style="background:#9d9c9d"></span><span class="nm">銀鼠</span><span class="dc">中層 10–30m、高度成長期以降の中規模ビル。</span>
+    <span class="sw" style="background:#e8ecef"></span><span class="nm">月白</span><span class="dc">高層 30m 以上、バブル期以降の塔状建築。</span>
+  </div>
+
+  <h2>形態 を 時代 の 代理 と す る 理由</h2>
+  <p>本来であれば建築年を直接プロットするのが理想ですが、PLATEAU の公開データには yearOfConstruction の値が記載されていません（schema 上は存在するものの、東京 22 区いずれも非公開）。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる——耐火構造の有無と高度を組み合わせると、おおよその建築世代が推測できるからです。</p>
+  <p>木造低層は戦前〜戦後早期、耐火低層は戦後復興、中層 RC は高度成長、超高層はバブル期以降。決して厳密な分類ではありませんが、街全体を一枚の地図として眺めると、時代の地層がはっきりと現れます。</p>
+
+  <h2>区 ご と の 強 い 偏 り</h2>
+  <table>
+    <thead>
+      <tr><th>区</th><th>朽葉%</th><th>月白%</th><th>平均高</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>練馬</td><td class="num">73.9</td><td class="num">0.3</td><td class="num">8.0 m</td></tr>
+      <tr><td>杉並</td><td class="num">71.6</td><td class="num">0.3</td><td class="num">8.1 m</td></tr>
+      <tr><td>世田谷</td><td class="num">65.8</td><td class="num">0.3</td><td class="num">8.2 m</td></tr>
+      <tr><td>渋谷</td><td class="num">42.3</td><td class="num">4.0</td><td class="num">11.6 m</td></tr>
+      <tr><td>新宿</td><td class="num">37.9</td><td class="num">4.3</td><td class="num">12.0 m</td></tr>
+      <tr><td>港</td><td class="num">28.0</td><td class="num">11.4</td><td class="num">16.1 m</td></tr>
+      <tr><td>中央</td><td class="num">26.6</td><td class="num">16.7</td><td class="num">18.3 m</td></tr>
+      <tr><td>千代田</td><td class="num">21.2</td><td class="num">18.5</td><td class="num">19.4 m</td></tr>
+    </tbody>
+  </table>
+  <p>都心 3 区（千代田・中央・港）は月白比率が最高で、朽葉が最低。郊外住宅区（練馬・杉並・世田谷）は逆の極にある。緩やかな勾配が皇居から外周に向かって広がり、東京の都市発展の年輪を可視化する。</p>
+
+  <h2>記 録 さ れ た 最 高 点</h2>
+  <p><b>墨田区</b> 634m = <b>東京スカイツリー</b>。22 区中で最も高い構造物として、形態地図の北東に屹立する。<br>
+  <b>港区</b> 332m = <b>麻布台ヒルズ森 JP タワー</b>（2023 年竣工）。地層の最新の頂点。</p>
+
+  <h2>中 文</h2>
+  <p>Tokyo Strata 是一张东京 22 区、290 万栋建筑物的城市考古地图，以「耐火结构 × 高度」为二轴。从 Project PLATEAU 2023–24 的 3D 都市模型中抽取每栋建筑的轮廓、用途、结构和高度，绘制成 4 色形态地层——朽叶为古层、月白为现代层。虽然建造年未公开，但形态作为时代的代理浮现出来。以皇居为中心，北至荒川 · 足立的下町、南至大田的海岸、西至世田谷 · 练马的郊外住宅地——一张地图，叠出东京千层的时间。</p>
+
+  <hr>
+
+  <h2>制 作</h2>
+  <div class="meta-block">
+    <p><b>データ</b>　Project PLATEAU 2023–24 CityGML（v4 / 一部 v3）。19 区は 2023 年度、墨田・品川・杉並は 2024 年度を使用。台東区は PLATEAU 2023 年度データセットが未公開のため除外。<br>
+    <b>ライセンス</b>　国土交通省／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／CC BY 4.0<br>
+    <b>配信</b>　290 万棟を PMTiles に圧縮（48 MB、HTTP 範囲リクエストで配信）<br>
+    <b>基礎図</b>　MapLibre GL JS 4.7　·　PMTiles 4.3　·　明朝：Hiragino Mincho ProN<br>
+    <b>印刷</b>　<a href="./tokyo-strata.pdf" download>tokyo-strata.pdf</a>（A3 横・10 ページ・6.9 MB）<br>
+    <b>自由探索</b>　<a href="./explore">explore mode</a></p>
+  </div>
+
+</main>
+
+</body>
+</html>
