@@ -1,0 +1,9 @@
+# Vercel uses this in preference to .gitignore.
+# We want data/*/buildings.geojson + data/stats.json uploaded,
+# but exclude the bulky intermediate files.
+data/*/udx
+data/*/codelists
+data/*/*.zip
+data/*/*.txt
+.playwright-mcp
+*.log

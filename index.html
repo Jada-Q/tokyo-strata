@@ -151,9 +151,43 @@
   #toc a:hover { color: #d8d2c8; }
   #toc a.active { color: #e8e4dc; }
   #toc a.active::before { background: #e8e4dc; }
+
+  /* Print button (lower-right, hidden on print) */
+  #print-btn {
+    position: fixed; bottom: 24px; right: 24px; z-index: 60;
+    background: transparent; border: 1px solid #3a3631;
+    color: #888; padding: 8px 16px; cursor: pointer;
+    font-family: 'Menlo', monospace; font-size: 10px; letter-spacing: 3px;
+  }
+  #print-btn:hover { color: #e8e4dc; border-color: #e8e4dc; }
+  #print-btn[disabled] { opacity: 0.4; cursor: wait; }
+
+  /* === PRINT === */
+  @page { size: A3 landscape; margin: 0; }
+  @media print {
+    html { scroll-snap-type: none !important; scroll-behavior: auto !important; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #0a0a0a !important; }
+    #toc, .scroll-hint, #print-btn { display: none !important; }
+    section {
+      height: 297mm !important;
+      width: 420mm !important;
+      page-break-after: always;
+      page-break-inside: avoid;
+      break-after: page;
+      break-inside: avoid;
+      overflow: hidden !important;
+    }
+    section:last-child { page-break-after: auto; break-after: auto; }
+    /* Slightly tighter type for print */
+    #cover h1 { font-size: 64px; }
+    .ward h2 { font-size: 48px; }
+    .ward .text, #intro .text { padding: 60px 48px; }
+  }
 </style>
 </head>
 <body>
+
+<button id="print-btn" onclick="preparePrint()">PRINT · A3</button>
 
 <nav id="toc">
   <a href="#cover">表紙</a>
@@ -428,16 +462,26 @@ function fillDataCard(card, ward) {
 
 const initialized = new Set();
 
+const wardMaps = {};
+
 async function initWardMap(wardId) {
-  if (initialized.has(wardId)) return;
+  if (initialized.has(wardId)) return wardMaps[wardId];
   initialized.add(wardId);
   const s = stats[wardId];
   const map = makeMap(`map-${wardId}`, s.bbox);
-  map.on('load', () => loadWardLayer(map, wardId));
+  wardMaps[wardId] = map;
+  return new Promise(resolve => {
+    map.on('load', async () => {
+      await loadWardLayer(map, wardId);
+      map.once('idle', () => resolve(map));
+    });
+  });
 }
 
+let introMapInst = null;
+
 async function initIntroMap() {
-  if (initialized.has('intro')) return;
+  if (initialized.has('intro')) return introMapInst;
   initialized.add('intro');
   // overall bbox = union of all wards
   let minx=180, miny=90, maxx=-180, maxy=-90;
@@ -449,22 +493,44 @@ async function initIntroMap() {
     if (d > maxy) maxy = d;
   }
   const map = makeMap('map-intro', [minx, miny, maxx, maxy]);
-  map.on('load', async () => {
-    // Load all 7 wards merged
-    const all = { type: 'FeatureCollection', features: [] };
-    for (const r of REGIONS) {
-      const res = await fetch(`./data/${r.id}/buildings.geojson`);
-      const gj = await res.json();
-      all.features.push(...gj.features);
-    }
-    map.addSource('bldg', { type: 'geojson', data: all });
-    map.addLayer({ id: 'bldg-fill', type: 'fill', source: 'bldg',
-      paint: { 'fill-color': FILL_COLOR_EXPR, 'fill-opacity': 0.95 } });
-    map.addLayer({ id: 'bldg-outline', type: 'line', source: 'bldg',
-      paint: { 'line-color': '#0a0a0a', 'line-width': 0.2 } });
-    addPalaceLabel(map);
+  introMapInst = map;
+  return new Promise(resolve => {
+    map.on('load', async () => {
+      const all = { type: 'FeatureCollection', features: [] };
+      for (const r of REGIONS) {
+        const res = await fetch(`./data/${r.id}/buildings.geojson`);
+        const gj = await res.json();
+        all.features.push(...gj.features);
+      }
+      map.addSource('bldg', { type: 'geojson', data: all });
+      map.addLayer({ id: 'bldg-fill', type: 'fill', source: 'bldg',
+        paint: { 'fill-color': FILL_COLOR_EXPR, 'fill-opacity': 0.95 } });
+      map.addLayer({ id: 'bldg-outline', type: 'line', source: 'bldg',
+        paint: { 'line-color': '#0a0a0a', 'line-width': 0.2 } });
+      addPalaceLabel(map);
+      map.once('idle', () => resolve(map));
+    });
   });
 }
+
+window.preparePrint = async function () {
+  const btn = document.getElementById('print-btn');
+  btn.textContent = 'LOADING ALL MAPS...';
+  btn.disabled = true;
+  try {
+    await initIntroMap();
+    for (const r of REGIONS) {
+      await initWardMap(r.id);
+    }
+    // small extra time for any remaining tile/layer rendering
+    await new Promise(res => setTimeout(res, 1200));
+    btn.textContent = 'PRINTING...';
+    window.print();
+  } finally {
+    btn.textContent = 'PRINT · A3';
+    btn.disabled = false;
+  }
+};
 
 (async function () {
   stats = await (await fetch('./data/stats.json')).json();
