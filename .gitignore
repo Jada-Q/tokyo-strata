@@ -9,3 +9,5 @@ node_modules/
 .DS_Store
 .vercel
 .claude-redteam/
+package.json
+package-lock.json
