@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Tokyo Strata · 千代田</title>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body {
+    background: #0a0a0a;
+    color: #c8c4be;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
+    overflow: hidden;
+  }
+  #map { width: 100vw; height: 100vh; background: #0a0a0a; }
+  .maplibregl-canvas { background: #0a0a0a; }
+
+  #title {
+    position: absolute; top: 32px; left: 40px; z-index: 5;
+    font-size: 11px; letter-spacing: 6px; color: #888;
+  }
+  #title b {
+    display: block; font-size: 28px; letter-spacing: 12px;
+    font-weight: 400; margin-top: 8px; color: #e8e4dc;
+  }
+  #subtitle {
+    position: absolute; top: 92px; left: 40px; z-index: 5;
+    font-size: 11px; letter-spacing: 1px; color: #777;
+    max-width: 320px; line-height: 1.7;
+  }
+  #legend {
+    position: absolute; bottom: 40px; left: 40px; z-index: 5;
+    font-size: 11px; letter-spacing: 1.5px; line-height: 2;
+    color: #c8c4be;
+  }
+  .swatch {
+    display: inline-block; width: 14px; height: 14px;
+    vertical-align: middle; margin-right: 12px;
+  }
+  #count {
+    position: absolute; bottom: 40px; right: 40px; z-index: 5;
+    font-size: 10px; color: #555; letter-spacing: 1.5px;
+    text-align: right; line-height: 1.7;
+  }
+  #count b { color: #888; }
+  .maplibregl-ctrl-attrib { display: none !important; }
+</style>
+</head>
+<body>
+<div id="title">TOKYO STRATA<b>千代田 形態地層</b></div>
+<div id="subtitle">耐火構造と高度から読み解く東京の都市考古学。色は形態の世代を表す。朽葉色は古層、月白色は現代層。建築年は PLATEAU に未掲載のため、形態を時代の代理指標とする。</div>
+<div id="legend">
+  <div><span class="swatch" style="background:#6e4c30"></span>老町（その他・不明 × 低層）</div>
+  <div><span class="swatch" style="background:#b19a55"></span>戦後小楼（耐火 × 低層 &lt;10m）</div>
+  <div><span class="swatch" style="background:#9d9c9d"></span>中高層（10–30m）</div>
+  <div><span class="swatch" style="background:#e8ecef"></span>高層・超高層（30m 以上）</div>
+</div>
+<div id="count"></div>
+<div id="map"></div>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+const map = new maplibregl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    sources: {},
+    layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#0a0a0a' } }]
+  },
+  center: [139.7530, 35.6895],
+  zoom: 13.2,
+  pitch: 0,
+  bearing: 0,
+  attributionControl: false,
+});
+
+map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+map.on('load', async () => {
+  const r = await fetch('./data/buildings.geojson');
+  const gj = await r.json();
+  document.getElementById('count').innerHTML =
+    '<b>' + gj.features.length.toLocaleString() + '</b> buildings<br>PLATEAU 千代田区 2023';
+
+  map.addSource('bldg', { type: 'geojson', data: gj });
+
+  // Outline thin for editorial feel
+  map.addLayer({
+    id: 'bldg-fill',
+    type: 'fill',
+    source: 'bldg',
+    paint: {
+      'fill-color': [
+        'case',
+        // 老町: その他/不明 + h < 10m
+        ['all',
+          ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
+          ['<', ['coalesce', ['get', 'h'], 0], 10]
+        ], '#6e4c30',
+        // 战后小楼: 耐火/準耐火 + h < 10m
+        ['all',
+          ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
+          ['<', ['coalesce', ['get', 'h'], 0], 10]
+        ], '#b19a55',
+        // 中高层: 10–30m
+        ['all',
+          ['>=', ['coalesce', ['get', 'h'], 0], 10],
+          ['<', ['coalesce', ['get', 'h'], 0], 30]
+        ], '#9d9c9d',
+        // 高/超高: >= 30m
+        ['>=', ['coalesce', ['get', 'h'], 0], 30], '#e8ecef',
+        '#3a3a3a'
+      ],
+      'fill-opacity': 0.92,
+    },
+  });
+
+  map.addLayer({
+    id: 'bldg-outline',
+    type: 'line',
+    source: 'bldg',
+    paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
+  });
+});
+</script>
+</body>
+</html>

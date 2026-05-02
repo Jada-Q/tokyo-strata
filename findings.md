@@ -44,3 +44,38 @@ Decision:                  NO-GO (< 40%)
 ## Reusable artifact
 
 `scripts/check-year-coverage.sh <citygml.zip>` — re-run on any PLATEAU zip to test yearOfConstruction coverage. Exit 0 = GO (≥40%), exit 2 = NO-GO.
+
+---
+
+## 2026-05-02 — Pivot A executed: form strata (height × fireproof)
+
+**Coverage on 38833 buildings**:
+
+| Field | Coverage |
+|---|---|
+| `bldg:measuredHeight` | 100% |
+| `uro:fireproofStructureType` | 100% |
+| `bldg:usage` | 100% |
+
+**Fireproof distribution** (千代田 2023):
+- 60.9% 耐火 (1001) — RC/SRC/钢造主导
+- 7.4% 準耐火造 (1002)
+- 14.0% その他 (1003) — 木造系
+- 17.8% 不明 (1011)
+
+**Height distribution**:
+- 0–3 m: 0.1% (mostly noise/sentinels — `-9999` exists as missing-value marker)
+- 3–10 m: 26.2% (低層)
+- 10–30 m: 50.7% (中層 — modal)
+- 30–100 m: 18.1% (高層)
+- ≥100 m: 0.4% (156 buildings, 超高層)
+
+**Color palette** (Japanese traditional colors, 4-tier):
+| Stratum | Rule | Color | Era proxy |
+|---|---|---|---|
+| 老町 | fp ∈ {1003, 1011} ∧ h<10m | 朽葉 #6e4c30 | 戦前〜戦後早期 |
+| 戦後小楼 | fp ∈ {1001, 1002} ∧ h<10m | 利休茶 #b19a55 | 戦後高度成長前 |
+| 中高層 | 10 ≤ h < 30m | 銀鼠 #9d9c9d | 高度成長期 |
+| 高/超高層 | h ≥ 30m | 月白 #e8ecef | バブル後〜現代 |
+
+See `screenshots/chiyoda-overview.png` for first render. Imperial Palace (皇居) shows naturally as the central black void — verifies geographic alignment. Surrounding high-density white = modern office strata; sparse 朽葉/利休茶 dots = 残存的老町/小楼 layer.
