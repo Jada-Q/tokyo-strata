@@ -1,0 +1,128 @@
+{
+  "arakawa": {
+    "count": 84869,
+    "bbox": [
+      139.7374,
+      35.7165,
+      139.8244,
+      35.7584
+    ],
+    "strata": {
+      "kuchiba": 42917,
+      "rikyu": 20425,
+      "ginnezu": 19879,
+      "tsukishiro": 1648,
+      "other": 0
+    },
+    "avg_height": 9.8,
+    "max_height": 154.4
+  },
+  "bunkyo": {
+    "count": 79455,
+    "bbox": [
+      139.7122,
+      35.6909,
+      139.7754,
+      35.7419
+    ],
+    "strata": {
+      "kuchiba": 31624,
+      "rikyu": 16687,
+      "ginnezu": 27168,
+      "tsukishiro": 3976,
+      "other": 0
+    },
+    "avg_height": 12.1,
+    "max_height": 234.1
+  },
+  "shinjuku": {
+    "count": 106588,
+    "bbox": [
+      139.6624,
+      35.6665,
+      139.7504,
+      35.7334
+    ],
+    "strata": {
+      "kuchiba": 40361,
+      "rikyu": 24026,
+      "ginnezu": 37585,
+      "tsukishiro": 4616,
+      "other": 0
+    },
+    "avg_height": 12.0,
+    "max_height": 243.3
+  },
+  "chiyoda": {
+    "count": 38833,
+    "bbox": [
+      139.7247,
+      35.6661,
+      139.7878,
+      35.7085
+    ],
+    "strata": {
+      "kuchiba": 8252,
+      "rikyu": 3698,
+      "ginnezu": 19683,
+      "tsukishiro": 7200,
+      "other": 0
+    },
+    "avg_height": 19.4,
+    "max_height": 264.6
+  },
+  "shibuya": {
+    "count": 90299,
+    "bbox": [
+      139.6497,
+      35.6331,
+      139.7258,
+      35.7002
+    ],
+    "strata": {
+      "kuchiba": 38164,
+      "rikyu": 17130,
+      "ginnezu": 31425,
+      "tsukishiro": 3580,
+      "other": 0
+    },
+    "avg_height": 11.6,
+    "max_height": 243.3
+  },
+  "chuo": {
+    "count": 37193,
+    "bbox": [
+      139.7494,
+      35.6408,
+      139.8005,
+      35.7002
+    ],
+    "strata": {
+      "kuchiba": 9889,
+      "rikyu": 4354,
+      "ginnezu": 16752,
+      "tsukishiro": 6198,
+      "other": 0
+    },
+    "avg_height": 18.3,
+    "max_height": 235.2
+  },
+  "minato": {
+    "count": 53783,
+    "bbox": [
+      139.6988,
+      35.6163,
+      139.7881,
+      35.6835
+    ],
+    "strata": {
+      "kuchiba": 15063,
+      "rikyu": 8650,
+      "ginnezu": 23914,
+      "tsukishiro": 6156,
+      "other": 0
+    },
+    "avg_height": 16.1,
+    "max_height": 332.1
+  }
+}
