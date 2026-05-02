@@ -34,9 +34,22 @@
     font-size: 11px; letter-spacing: 1.5px; line-height: 2;
     color: #c8c4be;
   }
+  #legend > div { display: flex; align-items: center; }
   .swatch {
     display: inline-block; width: 14px; height: 14px;
-    vertical-align: middle; margin-right: 12px;
+    margin-right: 14px; flex-shrink: 0;
+  }
+  .cname {
+    display: inline-block; width: 60px;
+    color: #d8d2c8; letter-spacing: 3px;
+  }
+  .cdesc { color: #777; letter-spacing: 1px; }
+  #palace-label {
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    color: #6f6862; font-size: 13px; letter-spacing: 14px;
+    writing-mode: vertical-rl; text-orientation: upright;
+    pointer-events: none; opacity: 0.85;
+    text-shadow: 0 0 8px rgba(0,0,0,0.6);
   }
   #count {
     position: absolute; bottom: 40px; right: 40px; z-index: 5;
@@ -49,12 +62,12 @@
 </head>
 <body>
 <div id="title">TOKYO STRATA<b>千代田 形態地層</b></div>
-<div id="subtitle">耐火構造と高度から読み解く東京の都市考古学。色は形態の世代を表す。朽葉色は古層、月白色は現代層。建築年は PLATEAU に未掲載のため、形態を時代の代理指標とする。</div>
+<div id="subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
 <div id="legend">
-  <div><span class="swatch" style="background:#6e4c30"></span>老町（その他・不明 × 低層）</div>
-  <div><span class="swatch" style="background:#b19a55"></span>戦後小楼（耐火 × 低層 &lt;10m）</div>
-  <div><span class="swatch" style="background:#9d9c9d"></span>中高層（10–30m）</div>
-  <div><span class="swatch" style="background:#e8ecef"></span>高層・超高層（30m 以上）</div>
+  <div><span class="swatch" style="background:#6e4c30"></span><span class="cname">朽葉</span><span class="cdesc">古き木造の街</span></div>
+  <div><span class="swatch" style="background:#b19a55"></span><span class="cname">利休茶</span><span class="cdesc">戦後の小楼</span></div>
+  <div><span class="swatch" style="background:#9d9c9d"></span><span class="cname">銀鼠</span><span class="cdesc">高度成長の中層</span></div>
+  <div><span class="swatch" style="background:#e8ecef"></span><span class="cname">月白</span><span class="cdesc">現代の塔</span></div>
 </div>
 <div id="count"></div>
 <div id="map"></div>
@@ -121,6 +134,14 @@ map.on('load', async () => {
     source: 'bldg',
     paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
   });
+
+  // 皇居 label
+  const palaceEl = document.createElement('div');
+  palaceEl.id = 'palace-label';
+  palaceEl.textContent = '皇居';
+  new maplibregl.Marker({ element: palaceEl, anchor: 'center' })
+    .setLngLat([139.7528, 35.6852])
+    .addTo(map);
 });
 </script>
 </body>
