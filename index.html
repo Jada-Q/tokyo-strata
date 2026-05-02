@@ -561,10 +561,18 @@ window.preparePrint = async function () {
 (async function () {
   stats = await (await fetch('./data/stats.json')).json();
   try {
-    landmarks = await (await fetch('./data/landmarks.json')).json();
+    landmarks = await (await fetch('./data/landmarks.json?v=2')).json();
+    if (!landmarks.landmarks) {
+      // Defensive: old schema (dict per ward) — flatten on the fly
+      const flat = [];
+      for (const [ward, items] of Object.entries(landmarks)) {
+        for (const lm of items) flat.push({ ...lm, primary_ward: ward });
+      }
+      landmarks = { landmarks: flat };
+    }
   } catch (e) {
     console.warn('landmarks not loaded:', e);
-    landmarks = {};
+    landmarks = { landmarks: [] };
   }
 
   // Fill all data cards now
