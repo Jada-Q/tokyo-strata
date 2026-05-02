@@ -8,7 +8,15 @@ PoC: visualize Tokyo's building strata as an editorial map (NHK-style city archa
 
 **Pivot A executed**: form strata using `measuredHeight × fireproofStructureType` (both 100% coverage). **7 wards loaded (都心圏), 491,020 buildings.**
 
-![都心 7 区 形態地層](./screenshots/seven-wards.png)
+**Editorial mode** (`index.html`): scrolling magazine — 表紙 → 序 → 7 区 → 出典. BRUTUS / NHK 出版社 city archaeology tone.
+
+![Cover](./screenshots/editorial-cover.png)
+![Intro](./screenshots/editorial-section-intro.png)
+![Minato](./screenshots/editorial-section-minato.png)
+
+**Explore mode** (`explore.html`): single interactive map, free zoom/pan over all 7 wards.
+
+![Explore](./screenshots/seven-wards.png)
 
 | Ward | Buildings |
 |---|---:|
@@ -39,11 +47,15 @@ python3 -m http.server 9877
 ## Layout
 
 ```
-index.html                  maplibre viewer (4-tier strata color, multi-ward)
+index.html                  editorial scrolling magazine (BRUTUS/NHK tone)
+explore.html                free interactive map (zoom/pan all wards)
 data/<ward>/                gitignored — per-ward citygml + extracted gml + buildings.geojson
+data/stats.json             per-ward count/bbox/strata%/avg-max height (committed via .gitignore allow)
 scripts/
   check-year-coverage.sh    yearOfConstruction probe
   parse_to_geojson.py       CityGML → GeoJSON (footprint + height + fireproof + usage)
+  compute_stats.py          per-ward stats → data/stats.json
+  add-ward.sh               one-shot pipeline: download + unzip + parse
 screenshots/                rendered samples (committed)
 findings.md                 PoC results log
 ```

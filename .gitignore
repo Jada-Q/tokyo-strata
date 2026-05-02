@@ -1,4 +1,5 @@
 data/
+!data/stats.json
 *.zip
 *.gml
 node_modules/

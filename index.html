@@ -2,168 +2,500 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Tokyo Strata · 都心 7 区</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokyo Strata · 都心 7 区 形態地層</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; }
+  html, body { width: 100%; }
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
   body {
     background: #0a0a0a;
     color: #c8c4be;
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
+    font-feature-settings: "palt" 1;
+  }
+  .maplibregl-canvas { background: #0a0a0a; }
+  .maplibregl-ctrl-attrib { display: none !important; }
+  .maplibregl-ctrl-bottom-right { display: none; }
+
+  section {
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
     overflow: hidden;
   }
-  #map { width: 100vw; height: 100vh; background: #0a0a0a; }
-  .maplibregl-canvas { background: #0a0a0a; }
 
-  #title {
-    position: absolute; top: 32px; left: 40px; z-index: 5;
-    font-size: 11px; letter-spacing: 6px; color: #888;
+  /* === COVER === */
+  #cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
   }
-  #title b {
-    display: block; font-size: 28px; letter-spacing: 12px;
-    font-weight: 400; margin-top: 8px; color: #e8e4dc;
+  #cover .super {
+    font-size: 11px; letter-spacing: 12px; color: #6b6660; margin-bottom: 32px;
   }
-  #subtitle {
-    position: absolute; top: 92px; left: 40px; z-index: 5;
-    font-size: 11px; letter-spacing: 1px; color: #777;
-    max-width: 320px; line-height: 1.7;
+  #cover h1 {
+    font-size: 56px; letter-spacing: 24px; font-weight: 400;
+    color: #e8e4dc; line-height: 1.4; text-align: center;
+    margin-left: 24px; /* compensate letter-spacing trailing */
   }
-  #legend {
-    position: absolute; bottom: 40px; left: 40px; z-index: 5;
-    font-size: 11px; letter-spacing: 1.5px; line-height: 2;
-    color: #c8c4be;
+  #cover .meta {
+    margin-top: 64px; font-size: 11px; letter-spacing: 4px;
+    color: #555; text-align: center; line-height: 2;
   }
-  #legend > div { display: flex; align-items: center; }
-  .swatch {
-    display: inline-block; width: 14px; height: 14px;
-    margin-right: 14px; flex-shrink: 0;
+  #cover .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; letter-spacing: 6px; color: #444; opacity: 0.7;
   }
-  .cname {
-    display: inline-block; width: 60px;
-    color: #d8d2c8; letter-spacing: 3px;
+
+  /* === INTRO === */
+  #intro {
+    display: grid;
+    grid-template-columns: 38vw 62vw;
   }
-  .cdesc { color: #777; letter-spacing: 1px; }
-  #palace-label {
+  #intro .text {
+    padding: 80px 56px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #intro .super { font-size: 11px; letter-spacing: 6px; color: #888; margin-bottom: 18px; }
+  #intro h2 { font-size: 32px; letter-spacing: 10px; font-weight: 400; color: #e8e4dc; margin-bottom: 32px; line-height: 1.5; }
+  #intro p { font-size: 13px; line-height: 2; letter-spacing: 1.5px; color: #b0aca4; max-width: 32em; margin-bottom: 18px; }
+  #intro .palette { margin-top: 32px; display: grid; grid-template-columns: 14px 60px 1fr; gap: 8px 14px; align-items: center; font-size: 11px; letter-spacing: 1.5px; }
+  #intro .palette .sw { width: 14px; height: 14px; }
+  #intro .palette .nm { color: #d8d2c8; letter-spacing: 3px; }
+  #intro .palette .dc { color: #777; }
+  #intro .map { width: 100%; height: 100%; }
+
+  /* === WARD SECTIONS === */
+  .ward {
+    display: grid;
+    grid-template-columns: 38vw 62vw;
+  }
+  .ward .text {
+    padding: 80px 56px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .ward .romaji { font-size: 10px; letter-spacing: 8px; color: #6b6660; margin-bottom: 14px; }
+  .ward h2 { font-size: 44px; letter-spacing: 18px; font-weight: 400; color: #e8e4dc; margin-bottom: 8px; line-height: 1.2; }
+  .ward .index { font-size: 10px; letter-spacing: 4px; color: #555; margin-bottom: 40px; }
+  .ward .narrative { font-size: 13px; line-height: 2; letter-spacing: 1.5px; color: #b0aca4; max-width: 32em; }
+  .ward .moment { font-size: 11px; letter-spacing: 2px; color: #888; font-style: normal; margin-top: 24px; padding-left: 14px; border-left: 1px solid #3a3631; line-height: 1.7; max-width: 32em; }
+  .ward .map { width: 100%; height: 100%; }
+
+  .data-card {
+    margin-top: 36px;
+    display: grid; grid-template-columns: auto 1fr; gap: 6px 24px;
+    font-size: 11px; letter-spacing: 1.5px; color: #c8c4be;
+    padding-top: 24px; border-top: 1px solid #2a2622;
+  }
+  .data-card .k { color: #6b6660; }
+  .data-card .v { color: #d8d2c8; }
+  .data-card .v b { color: #e8e4dc; font-weight: 400; }
+
+  .strata-bar {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    display: flex;
+    width: 100%;
+    height: 6px;
+    border: 1px solid #2a2622;
+  }
+  .strata-bar > span {
+    height: 100%;
+  }
+  .strata-bar-legend {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #6b6660;
+    margin-top: 4px;
+  }
+
+  /* === COLOPHON === */
+  #colophon {
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 0 60px;
+  }
+  #colophon .super { font-size: 11px; letter-spacing: 8px; color: #6b6660; margin-bottom: 24px; }
+  #colophon h2 { font-size: 22px; letter-spacing: 8px; font-weight: 400; color: #d8d2c8; margin-bottom: 48px; }
+  #colophon p { font-size: 12px; line-height: 2.2; letter-spacing: 1.5px; color: #888; max-width: 36em; margin-bottom: 18px; }
+  #colophon .small { font-size: 10px; color: #555; letter-spacing: 2px; margin-top: 32px; }
+  #colophon a { color: #888; text-decoration: none; border-bottom: 1px solid #3a3631; }
+  #colophon a:hover { color: #d8d2c8; }
+
+  /* === PALACE LABEL on every map === */
+  .palace-label {
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-    color: #6f6862; font-size: 13px; letter-spacing: 14px;
+    color: #6f6862; font-size: 12px; letter-spacing: 12px;
     writing-mode: vertical-rl; text-orientation: upright;
     pointer-events: none; opacity: 0.85;
     text-shadow: 0 0 8px rgba(0,0,0,0.6);
   }
-  #count {
-    position: absolute; bottom: 40px; right: 40px; z-index: 5;
-    font-size: 10px; color: #555; letter-spacing: 1.5px;
-    text-align: right; line-height: 1.7;
+
+  /* Section index in fixed right edge */
+  #toc {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 50;
+    display: flex; flex-direction: column; gap: 14px;
+    font-size: 10px; letter-spacing: 2px; color: #444;
   }
-  #count b { color: #888; }
-  .maplibregl-ctrl-attrib { display: none !important; }
+  #toc a { display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; }
+  #toc a::before { content: ''; width: 18px; height: 1px; background: currentColor; }
+  #toc a:hover { color: #d8d2c8; }
+  #toc a.active { color: #e8e4dc; }
+  #toc a.active::before { background: #e8e4dc; }
 </style>
 </head>
 <body>
-<div id="title">TOKYO STRATA<b>都心 7 区 形態地層</b></div>
-<div id="subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
-<div id="legend">
-  <div><span class="swatch" style="background:#6e4c30"></span><span class="cname">朽葉</span><span class="cdesc">古き木造の街</span></div>
-  <div><span class="swatch" style="background:#b19a55"></span><span class="cname">利休茶</span><span class="cdesc">戦後の小楼</span></div>
-  <div><span class="swatch" style="background:#9d9c9d"></span><span class="cname">銀鼠</span><span class="cdesc">高度成長の中層</span></div>
-  <div><span class="swatch" style="background:#e8ecef"></span><span class="cname">月白</span><span class="cdesc">現代の塔</span></div>
-</div>
-<div id="count"></div>
-<div id="map"></div>
+
+<nav id="toc">
+  <a href="#cover">表紙</a>
+  <a href="#intro">序</a>
+  <a href="#arakawa">荒川</a>
+  <a href="#bunkyo">文京</a>
+  <a href="#shinjuku">新宿</a>
+  <a href="#chiyoda">千代田</a>
+  <a href="#shibuya">渋谷</a>
+  <a href="#chuo">中央</a>
+  <a href="#minato">港</a>
+  <a href="#colophon">出典</a>
+</nav>
+
+<section id="cover">
+  <div class="super">TOKYO STRATA · 2026</div>
+  <h1>都心 7 区<br>形 態 地 層</h1>
+  <div class="meta">耐火構造 × 高度<br>49 万棟の建物から読み解く<br>東京の都市考古学</div>
+  <div class="scroll-hint">SCROLL ↓</div>
+</section>
+
+<section id="intro">
+  <div class="text">
+    <div class="super">序</div>
+    <h2>形態は時代の<br>代理指標である</h2>
+    <p>東京の都心 7 区、49 万棟の建築物を耐火構造と高度の二軸で読み解いた地層図。建築年は記録されていないが、形態が時代の代理として浮かび上がる。</p>
+    <p>朽葉が古層、月白が現代層。皇居を中心に、北は荒川の下町、南は港区の海岸まで——一枚の地図に重なる東京の時間を読む。</p>
+    <div class="palette">
+      <span class="sw" style="background:#6e4c30"></span><span class="nm">朽葉</span><span class="dc">古き木造の街</span>
+      <span class="sw" style="background:#b19a55"></span><span class="nm">利休茶</span><span class="dc">戦後の小楼</span>
+      <span class="sw" style="background:#9d9c9d"></span><span class="nm">銀鼠</span><span class="dc">高度成長の中層</span>
+      <span class="sw" style="background:#e8ecef"></span><span class="nm">月白</span><span class="dc">現代の塔</span>
+    </div>
+  </div>
+  <div class="map" id="map-intro"></div>
+</section>
+
+<section class="ward" id="arakawa" data-ward="arakawa">
+  <div class="text">
+    <div>
+      <div class="romaji">ARAKAWA</div>
+      <h2>荒 川</h2>
+      <div class="index">第 一 区 · 北端の下町</div>
+    </div>
+    <div class="narrative">
+      <p>下町の北端、隅田川と荒川に挟まれた老町。朽葉色が最も濃く、形態地図上では低層の古層が連続する地層として浮かぶ。戦前の長屋と銭湯がいまなお路地に残り、明治・大正の街並みの輪郭がこの区では消えていない。</p>
+      <p class="moment">7 区中、朽葉色 50.6% と最も高い古層率。最高高度 154m、平均 9.8m——下町スケールが保たれている。</p>
+    </div>
+    <div class="data-card" data-ward-stats="arakawa"></div>
+  </div>
+  <div class="map" id="map-arakawa"></div>
+</section>
+
+<section class="ward" id="bunkyo" data-ward="bunkyo">
+  <div class="text">
+    <div>
+      <div class="romaji">BUNKYŌ</div>
+      <h2>文 京</h2>
+      <div class="index">第 二 区 · 本郷台地の屋敷町</div>
+    </div>
+    <div class="narrative">
+      <p>本郷台地の住宅地。旧帝大と図書館の街。形態は朽葉と利休茶が穏やかに混じる中層が支配的で、戦前から続く屋敷町の骨格が残る。新宿副都心のような塔は持たず、谷を挟んで低中層がゆるやかに重なる地層となる。</p>
+      <p class="moment">朽葉 39.8%、月白 5.0%——「中庸の地層」。後楽園・東大本郷の周囲に古層が均質に広がる。</p>
+    </div>
+    <div class="data-card" data-ward-stats="bunkyo"></div>
+  </div>
+  <div class="map" id="map-bunkyo"></div>
+</section>
+
+<section class="ward" id="shinjuku" data-ward="shinjuku">
+  <div class="text">
+    <div>
+      <div class="romaji">SHINJUKU</div>
+      <h2>新 宿</h2>
+      <div class="index">第 三 区 · 両極の区</div>
+    </div>
+    <div class="narrative">
+      <p>西新宿の超高層ビル群と、神楽坂・早稲田の路地裏が同居する両極の区。形態地図上では月白の塔が西側に集中し、東側に朽葉の小さな点が散らばる。一つの区の中に「現代の塔」と「戦前の坂道」が、徒歩 30 分の距離で共存する。</p>
+      <p class="moment">建物 10 万 6588 棟——7 区中最多。最高 243m（西新宿）と古層 37.9% が同居する稀有な構造。</p>
+    </div>
+    <div class="data-card" data-ward-stats="shinjuku"></div>
+  </div>
+  <div class="map" id="map-shinjuku"></div>
+</section>
+
+<section class="ward" id="chiyoda" data-ward="chiyoda">
+  <div class="text">
+    <div>
+      <div class="romaji">CHIYODA</div>
+      <h2>千 代 田</h2>
+      <div class="index">第 四 区 · 都心の核</div>
+    </div>
+    <div class="narrative">
+      <p>皇居を中心とする都心の核。月白と銀鼠の高層が皇居周辺に整然と並び、丸の内・大手町は形態地図の最も明るい一角となる。番町・神田の一部に朽葉の残片が見えるが、戦後の都市計画によって地層は均質化されている。</p>
+      <p class="moment">月白比率 18.5%——7 区中で最大。平均高度 19.4m と最高。皇居の void が地層に空白の核を作る。</p>
+    </div>
+    <div class="data-card" data-ward-stats="chiyoda"></div>
+  </div>
+  <div class="map" id="map-chiyoda"></div>
+</section>
+
+<section class="ward" id="shibuya" data-ward="shibuya">
+  <div class="text">
+    <div>
+      <div class="romaji">SHIBUYA</div>
+      <h2>渋 谷</h2>
+      <div class="index">第 五 区 · 若い商業区</div>
+    </div>
+    <div class="narrative">
+      <p>青山・原宿・恵比寿を含む若い商業区。形態地図では銀鼠の中層が主体、月白の塔が点在する。明治神宮の森が大きな黒の void として浮かび、その輪郭がこの区の geographic identity を作っている。</p>
+      <p class="moment">朽葉 42.3%、月白 4.0%——古層は残るが塔は控えめ。神宮の森の輪郭が南北に走る。</p>
+    </div>
+    <div class="data-card" data-ward-stats="shibuya"></div>
+  </div>
+  <div class="map" id="map-shibuya"></div>
+</section>
+
+<section class="ward" id="chuo" data-ward="chuo">
+  <div class="text">
+    <div>
+      <div class="romaji">CHŪŌ</div>
+      <h2>中 央</h2>
+      <div class="index">第 六 区 · 江戸の中央</div>
+    </div>
+    <div class="narrative">
+      <p>銀座・日本橋・築地・月島。江戸の中央。下町と高層が複雑に層を成す。月島・佃島には朽葉の長屋がいまも残り、隣接する豊洲・晴海は月白の超高層タワーが新たな地層を築きつつある。古層と最新層が一区内で対比される。</p>
+      <p class="moment">月白 16.7%——千代田に次ぐ高さ。古層 26.6% と銀鼠 45.0% が「江戸の骨格」を支える。</p>
+    </div>
+    <div class="data-card" data-ward-stats="chuo"></div>
+  </div>
+  <div class="map" id="map-chuo"></div>
+</section>
+
+<section class="ward" id="minato" data-ward="minato">
+  <div class="text">
+    <div>
+      <div class="romaji">MINATO</div>
+      <h2>港</h2>
+      <div class="index">第 七 区 · 山手と海岸</div>
+    </div>
+    <div class="narrative">
+      <p>赤坂・六本木・品川・台場。山手と海岸の両方を含む。西側の山手は月白と銀鼠の高層、東側の海岸エリアは月白の超高層タワー群。形態地図の南端には、お台場・湾岸の人工島が独立した地層として広がる。</p>
+      <p class="moment">最高高度 332m——麻布台ヒルズ森 JP タワー、7 区中で最高。地層の最新の頂点。</p>
+    </div>
+    <div class="data-card" data-ward-stats="minato"></div>
+  </div>
+  <div class="map" id="map-minato"></div>
+</section>
+
+<section id="colophon">
+  <div class="super">出 典 と 凡 例</div>
+  <h2>形 態 地 層 と は</h2>
+  <p>色は耐火構造と高度の組み合わせから割り当てた、形態の世代を表す。朽葉は「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造。利休茶は耐火・準耐火の同低層——戦後の小楼。銀鼠は中層 10–30m、高度成長期以降の中規模ビル。月白は高層 30m 以上、バブル期以降の塔状建築。</p>
+  <p>建築年は PLATEAU には掲載されていないため、形態を時代の代理指標とした。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる。</p>
+  <p class="small">データ：Project PLATEAU 千代田区・中央区・港区・新宿区・文京区・渋谷区・荒川区 2023 年度 CityGML（v4）／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／国土交通省／CC BY 4.0</p>
+  <p class="small">基礎図：MapLibre GL JS 4.7　·　明朝：Hiragino Mincho ProN</p>
+  <p class="small">自由探索モードは <a href="./explore.html">explore.html</a> に。</p>
+</section>
+
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 const REGIONS = [
+  { id: 'arakawa',  name: '荒川' },
+  { id: 'bunkyo',   name: '文京' },
+  { id: 'shinjuku', name: '新宿' },
   { id: 'chiyoda',  name: '千代田' },
+  { id: 'shibuya',  name: '渋谷' },
   { id: 'chuo',     name: '中央' },
   { id: 'minato',   name: '港' },
-  { id: 'shinjuku', name: '新宿' },
-  { id: 'bunkyo',   name: '文京' },
-  { id: 'shibuya',  name: '渋谷' },
-  { id: 'arakawa',  name: '荒川' },
 ];
 
-const map = new maplibregl.Map({
-  container: 'map',
-  style: {
+const STRATUM_COLORS = {
+  kuchiba: '#6e4c30',
+  rikyu: '#b19a55',
+  ginnezu: '#9d9c9d',
+  tsukishiro: '#e8ecef',
+};
+
+const FILL_COLOR_EXPR = [
+  'case',
+  ['all',
+    ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
+    ['<', ['coalesce', ['get', 'h'], 0], 10]
+  ], STRATUM_COLORS.kuchiba,
+  ['all',
+    ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
+    ['<', ['coalesce', ['get', 'h'], 0], 10]
+  ], STRATUM_COLORS.rikyu,
+  ['all',
+    ['>=', ['coalesce', ['get', 'h'], 0], 10],
+    ['<', ['coalesce', ['get', 'h'], 0], 30]
+  ], STRATUM_COLORS.ginnezu,
+  ['>=', ['coalesce', ['get', 'h'], 0], 30], STRATUM_COLORS.tsukishiro,
+  '#3a3631'
+];
+
+let stats = null;
+
+function emptyStyle() {
+  return {
     version: 8,
     sources: {},
     layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#0a0a0a' } }]
-  },
-  center: [139.7250, 35.6850],
-  zoom: 11.2,
-  pitch: 0,
-  bearing: 0,
-  attributionControl: false,
-});
+  };
+}
 
-map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-
-map.on('load', async () => {
-  const merged = { type: 'FeatureCollection', features: [] };
-  for (const region of REGIONS) {
-    try {
-      const r = await fetch(`./data/${region.id}/buildings.geojson`);
-      if (!r.ok) { console.warn(`skip ${region.id}: ${r.status}`); continue; }
-      const gj = await r.json();
-      gj.features.forEach(f => { f.properties.ward = region.id; });
-      merged.features.push(...gj.features);
-    } catch (e) {
-      console.warn(`load failed ${region.id}:`, e);
-    }
-  }
-  document.getElementById('count').innerHTML =
-    '<b>' + merged.features.length.toLocaleString() + '</b> buildings<br>PLATEAU ' +
-    REGIONS.map(r => r.name).join('・') + ' 2023';
-
-  map.addSource('bldg', { type: 'geojson', data: merged });
-
-  // Outline thin for editorial feel
-  map.addLayer({
-    id: 'bldg-fill',
-    type: 'fill',
-    source: 'bldg',
-    paint: {
-      'fill-color': [
-        'case',
-        // 老町: その他/不明 + h < 10m
-        ['all',
-          ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
-          ['<', ['coalesce', ['get', 'h'], 0], 10]
-        ], '#6e4c30',
-        // 战后小楼: 耐火/準耐火 + h < 10m
-        ['all',
-          ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
-          ['<', ['coalesce', ['get', 'h'], 0], 10]
-        ], '#b19a55',
-        // 中高层: 10–30m
-        ['all',
-          ['>=', ['coalesce', ['get', 'h'], 0], 10],
-          ['<', ['coalesce', ['get', 'h'], 0], 30]
-        ], '#9d9c9d',
-        // 高/超高: >= 30m
-        ['>=', ['coalesce', ['get', 'h'], 0], 30], '#e8ecef',
-        '#3a3a3a'
-      ],
-      'fill-opacity': 0.92,
-    },
+function makeMap(containerId, bbox) {
+  const map = new maplibregl.Map({
+    container: containerId,
+    style: emptyStyle(),
+    bounds: bbox,
+    fitBoundsOptions: { padding: 40, animate: false },
+    interactive: false,
+    attributionControl: false,
   });
+  return map;
+}
 
+async function loadWardLayer(map, wardId) {
+  const r = await fetch(`./data/${wardId}/buildings.geojson`);
+  const gj = await r.json();
+  map.addSource('bldg', { type: 'geojson', data: gj });
   map.addLayer({
-    id: 'bldg-outline',
-    type: 'line',
-    source: 'bldg',
+    id: 'bldg-fill', type: 'fill', source: 'bldg',
+    paint: { 'fill-color': FILL_COLOR_EXPR, 'fill-opacity': 0.95 }
+  });
+  map.addLayer({
+    id: 'bldg-outline', type: 'line', source: 'bldg',
     paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
   });
+  // Palace label on千代田 only (and intro overview)
+  if (wardId === 'chiyoda' || wardId === 'intro') {
+    addPalaceLabel(map);
+  }
+}
 
-  // 皇居 label
-  const palaceEl = document.createElement('div');
-  palaceEl.id = 'palace-label';
-  palaceEl.textContent = '皇居';
-  new maplibregl.Marker({ element: palaceEl, anchor: 'center' })
+function addPalaceLabel(map) {
+  const el = document.createElement('div');
+  el.className = 'palace-label';
+  el.textContent = '皇居';
+  new maplibregl.Marker({ element: el, anchor: 'center' })
     .setLngLat([139.7528, 35.6852])
     .addTo(map);
-});
+}
+
+function fillDataCard(card, ward) {
+  const s = stats[ward];
+  const total = s.count;
+  const pct = (k) => Math.round(1000 * s.strata[k] / total) / 10;
+
+  card.innerHTML = `
+    <span class="k">建物</span>
+    <span class="v"><b>${total.toLocaleString()}</b> 棟</span>
+    <span class="k">平均高</span>
+    <span class="v">${s.avg_height.toFixed(1)} m</span>
+    <span class="k">最高棟</span>
+    <span class="v">${s.max_height.toFixed(1)} m</span>
+    <div class="strata-bar">
+      <span style="width:${pct('kuchiba')}%; background:${STRATUM_COLORS.kuchiba}"></span>
+      <span style="width:${pct('rikyu')}%; background:${STRATUM_COLORS.rikyu}"></span>
+      <span style="width:${pct('ginnezu')}%; background:${STRATUM_COLORS.ginnezu}"></span>
+      <span style="width:${pct('tsukishiro')}%; background:${STRATUM_COLORS.tsukishiro}"></span>
+    </div>
+    <div class="strata-bar-legend">
+      <span>朽葉 ${pct('kuchiba')}%</span>
+      <span>利休茶 ${pct('rikyu')}%</span>
+      <span>銀鼠 ${pct('ginnezu')}%</span>
+      <span>月白 ${pct('tsukishiro')}%</span>
+    </div>
+  `;
+}
+
+const initialized = new Set();
+
+async function initWardMap(wardId) {
+  if (initialized.has(wardId)) return;
+  initialized.add(wardId);
+  const s = stats[wardId];
+  const map = makeMap(`map-${wardId}`, s.bbox);
+  map.on('load', () => loadWardLayer(map, wardId));
+}
+
+async function initIntroMap() {
+  if (initialized.has('intro')) return;
+  initialized.add('intro');
+  // overall bbox = union of all wards
+  let minx=180, miny=90, maxx=-180, maxy=-90;
+  for (const r of REGIONS) {
+    const [a,b,c,d] = stats[r.id].bbox;
+    if (a < minx) minx = a;
+    if (b < miny) miny = b;
+    if (c > maxx) maxx = c;
+    if (d > maxy) maxy = d;
+  }
+  const map = makeMap('map-intro', [minx, miny, maxx, maxy]);
+  map.on('load', async () => {
+    // Load all 7 wards merged
+    const all = { type: 'FeatureCollection', features: [] };
+    for (const r of REGIONS) {
+      const res = await fetch(`./data/${r.id}/buildings.geojson`);
+      const gj = await res.json();
+      all.features.push(...gj.features);
+    }
+    map.addSource('bldg', { type: 'geojson', data: all });
+    map.addLayer({ id: 'bldg-fill', type: 'fill', source: 'bldg',
+      paint: { 'fill-color': FILL_COLOR_EXPR, 'fill-opacity': 0.95 } });
+    map.addLayer({ id: 'bldg-outline', type: 'line', source: 'bldg',
+      paint: { 'line-color': '#0a0a0a', 'line-width': 0.2 } });
+    addPalaceLabel(map);
+  });
+}
+
+(async function () {
+  stats = await (await fetch('./data/stats.json')).json();
+
+  // Fill all data cards now
+  document.querySelectorAll('[data-ward-stats]').forEach(card => {
+    fillDataCard(card, card.dataset.wardStats);
+  });
+
+  // IntersectionObserver for lazy map init
+  const obs = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const sec = e.target;
+      if (sec.id === 'intro') initIntroMap();
+      else if (sec.dataset.ward) initWardMap(sec.dataset.ward);
+    }
+  }, { rootMargin: '200px 0px', threshold: 0.01 });
+  document.querySelectorAll('section.ward, section#intro').forEach(s => obs.observe(s));
+
+  // TOC active state
+  const tocLinks = document.querySelectorAll('#toc a');
+  const sections = [...document.querySelectorAll('section')];
+  const tocObs = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    }
+  }, { threshold: 0.5 });
+  sections.forEach(s => tocObs.observe(s));
+})();
 </script>
 </body>
 </html>
