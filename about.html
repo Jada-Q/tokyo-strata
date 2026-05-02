@@ -88,8 +88,9 @@
     text-transform: uppercase; letter-spacing: 2px;
     font-size: 10px;
   }
+  th.num { text-align: right; }
   td { color: #b0aca4; }
-  td.num { text-align: right; color: #d8d2c8; }
+  td.num { text-align: right; color: #d8d2c8; font-variant-numeric: tabular-nums; }
 
   .meta-block {
     font-size: 11px; letter-spacing: 1.5px; color: #777;
@@ -151,7 +152,7 @@
   <h2>区 ご と の 強 い 偏 り</h2>
   <table>
     <thead>
-      <tr><th>区</th><th>朽葉%</th><th>月白%</th><th>平均高</th></tr>
+      <tr><th>区</th><th class="num">朽葉%</th><th class="num">月白%</th><th class="num">平均高</th></tr>
     </thead>
     <tbody>
       <tr><td>練馬</td><td class="num">73.9</td><td class="num">0.3</td><td class="num">8.0 m</td></tr>
