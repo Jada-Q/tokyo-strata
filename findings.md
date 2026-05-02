@@ -79,3 +79,14 @@ Decision:                  NO-GO (< 40%)
 | 高/超高層 | h ≥ 30m | 月白 #e8ecef | バブル後〜現代 |
 
 See `screenshots/chiyoda-overview.png` for first render. Imperial Palace (皇居) shows naturally as the central black void — verifies geographic alignment. Surrounding high-density white = modern office strata; sparse 朽葉/利休茶 dots = 残存的老町/小楼 layer.
+
+## 2026-05-02 — Minato added (2 wards)
+
+**Parser run on Minato (港区) 2023**: 53783 buildings, 100% fireproof + height coverage (same as Chiyoda).
+**Combined**: 92,616 buildings across two wards.
+
+`yearOfConstruction` again 0% — confirms Tokyo 23 wards have collectively chosen not to publish that field. Form-strata pivot is the only viable path on PLATEAU alone.
+
+Viewer now config-driven: `REGIONS = [{id, name}]` array; ward subdir convention `data/<id>/buildings.geojson`. Adding a ward = download + parse + push to array.
+
+See `screenshots/chiyoda-minato.png`. Visual story holds: 皇居 anchors the north, 港区's 中部・東南 retains pockets of 朽葉 (old town) layer, 西側 (赤坂/六本木) is dominated by 銀鼠/月白 (modern strata).

@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Tokyo Strata · 千代田</title>
+<title>Tokyo Strata · 千代田 + 港</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<div id="title">TOKYO STRATA<b>千代田 形態地層</b></div>
+<div id="title">TOKYO STRATA<b>千代田・港 形態地層</b></div>
 <div id="subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
 <div id="legend">
   <div><span class="swatch" style="background:#6e4c30"></span><span class="cname">朽葉</span><span class="cdesc">古き木造の街</span></div>
@@ -73,6 +73,11 @@
 <div id="map"></div>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
+const REGIONS = [
+  { id: 'chiyoda', name: '千代田区' },
+  { id: 'minato',  name: '港区' },
+];
+
 const map = new maplibregl.Map({
   container: 'map',
   style: {
@@ -80,8 +85,8 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#0a0a0a' } }]
   },
-  center: [139.7530, 35.6895],
-  zoom: 13.2,
+  center: [139.7475, 35.6730],
+  zoom: 12.2,
   pitch: 0,
   bearing: 0,
   attributionControl: false,
@@ -90,12 +95,23 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
 map.on('load', async () => {
-  const r = await fetch('./data/buildings.geojson');
-  const gj = await r.json();
+  const merged = { type: 'FeatureCollection', features: [] };
+  for (const region of REGIONS) {
+    try {
+      const r = await fetch(`./data/${region.id}/buildings.geojson`);
+      if (!r.ok) { console.warn(`skip ${region.id}: ${r.status}`); continue; }
+      const gj = await r.json();
+      gj.features.forEach(f => { f.properties.ward = region.id; });
+      merged.features.push(...gj.features);
+    } catch (e) {
+      console.warn(`load failed ${region.id}:`, e);
+    }
+  }
   document.getElementById('count').innerHTML =
-    '<b>' + gj.features.length.toLocaleString() + '</b> buildings<br>PLATEAU 千代田区 2023';
+    '<b>' + merged.features.length.toLocaleString() + '</b> buildings<br>PLATEAU ' +
+    REGIONS.map(r => r.name).join('・') + ' 2023';
 
-  map.addSource('bldg', { type: 'geojson', data: gj });
+  map.addSource('bldg', { type: 'geojson', data: merged });
 
   // Outline thin for editorial feel
   map.addLayer({
