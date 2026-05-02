@@ -90,3 +90,31 @@ See `screenshots/chiyoda-overview.png` for first render. Imperial Palace (皇居
 Viewer now config-driven: `REGIONS = [{id, name}]` array; ward subdir convention `data/<id>/buildings.geojson`. Adding a ward = download + parse + push to array.
 
 See `screenshots/chiyoda-minato.png`. Visual story holds: 皇居 anchors the north, 港区's 中部・東南 retains pockets of 朽葉 (old town) layer, 西側 (赤坂/六本木) is dominated by 銀鼠/月白 (modern strata).
+
+## 2026-05-02 — 7 wards loaded (都心圏)
+
+| Ward | Buildings | GeoJSON |
+|---|---:|---:|
+| 千代田 | 38,833 | 16 MB |
+| 中央 | 37,193 | 15 MB |
+| 港 | 53,783 | 23 MB |
+| 新宿 | 106,588 | 42 MB |
+| 文京 | 79,455 | 31 MB |
+| 渋谷 | 90,299 | 37 MB |
+| 荒川 | 84,869 | 31 MB |
+| **Total** | **491,020** | **~195 MB** |
+
+(Note: PLATEAU does *not* publish a standalone Taito ward 2023 dataset; substituted Arakawa as the lower-east 下町 representative.)
+
+All 7 wards confirmed `yearOfConstruction = 0%`. Form strata (height × fireproof) maintains 100% coverage across all.
+
+`scripts/add-ward.sh <id> <citygml-zip-url>` is the one-command pipeline (download → unzip → parse). Adding a new ward = one shell call + one `REGIONS` array entry in `index.html`.
+
+See `screenshots/seven-wards.png`. The cross-ward comparison brings out the strata story:
+- **北部** (荒川 / 文京) — 朽葉/利休茶 dominant, lowest-rise 残存的下町 layer
+- **中央** (千代田・中央) — uniform white-grey 高層 office strata, sharpest geometric grid
+- **西部** (新宿) — bipolar: 西新宿 superhighs + 神楽坂/早稲田 朽葉 pockets
+- **南西** (渋谷・港) — mixed mid + high, scattered 朽葉 残存
+- **皇居** anchors center as the natural void; gray river arteries (神田川 / 隅田川 / 目黒川) emerge between strata.
+
+Performance: 491k features as merged GeoJSON (~195 MB) loads in ~5-10s on M-series Mac. For 23-ward expansion (~2M features), tile-ization (PMTiles or vector tiles) will be required.

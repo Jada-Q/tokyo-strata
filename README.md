@@ -6,9 +6,13 @@ PoC: visualize Tokyo's building strata as an editorial map (NHK-style city archa
 
 **2026-05-02**: Original direction (color by `yearOfConstruction`) **NO-GO** — PLATEAU Chiyoda 2023 has 0/38833 buildings with that attribute.
 
-**Pivot A executed**: form strata using `measuredHeight × fireproofStructureType` (both 100% coverage). 2 wards loaded (千代田 + 港区), 92,616 buildings combined.
+**Pivot A executed**: form strata using `measuredHeight × fireproofStructureType` (both 100% coverage). **7 wards loaded (都心圏), 491,020 buildings.**
 
-![Chiyoda + Minato](./screenshots/chiyoda-minato.png)
+![都心 7 区 形態地層](./screenshots/seven-wards.png)
+
+| Ward | Buildings |
+|---|---:|
+| 千代田 / 中央 / 港 / 新宿 / 文京 / 渋谷 / 荒川 | 491,020 |
 
 See [findings.md](./findings.md) for the full result, coverage stats, and color palette rationale.
 
@@ -19,19 +23,11 @@ See [findings.md](./findings.md) for the full result, coverage stats, and color 
 ## Add a ward
 
 ```bash
-WARD=shibuya  # or whatever
-mkdir -p data/$WARD
-curl -L -o data/$WARD/${WARD}-citygml.zip "<plateau ckan url>"
-cd data/$WARD && unzip -oq ${WARD}-citygml.zip "udx/bldg/*" "codelists/*" && cd -
-
-# Coverage probe (optional — confirms yearOfConstruction still 0%)
-./scripts/check-year-coverage.sh data/$WARD/${WARD}-citygml.zip
-
-# Parse → GeoJSON
-python3 scripts/parse_to_geojson.py data/$WARD data/$WARD/buildings.geojson
-
-# Add { id: 'shibuya', name: '渋谷区' } to REGIONS in index.html
+./scripts/add-ward.sh <ward-id> <plateau-citygml-zip-url>
+# then add { id: '<ward-id>', name: '<日本語>' } to REGIONS in index.html
 ```
+
+The script does download + unzip (bldg + codelists only) + parse → `data/<ward-id>/buildings.geojson`. Idempotent; rerun is safe.
 
 ## Run viewer
 

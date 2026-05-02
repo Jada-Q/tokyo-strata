@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Tokyo Strata · 千代田 + 港</title>
+<title>Tokyo Strata · 都心 7 区</title>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<div id="title">TOKYO STRATA<b>千代田・港 形態地層</b></div>
+<div id="title">TOKYO STRATA<b>都心 7 区 形態地層</b></div>
 <div id="subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
 <div id="legend">
   <div><span class="swatch" style="background:#6e4c30"></span><span class="cname">朽葉</span><span class="cdesc">古き木造の街</span></div>
@@ -74,8 +74,13 @@
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 const REGIONS = [
-  { id: 'chiyoda', name: '千代田区' },
-  { id: 'minato',  name: '港区' },
+  { id: 'chiyoda',  name: '千代田' },
+  { id: 'chuo',     name: '中央' },
+  { id: 'minato',   name: '港' },
+  { id: 'shinjuku', name: '新宿' },
+  { id: 'bunkyo',   name: '文京' },
+  { id: 'shibuya',  name: '渋谷' },
+  { id: 'arakawa',  name: '荒川' },
 ];
 
 const map = new maplibregl.Map({
@@ -85,8 +90,8 @@ const map = new maplibregl.Map({
     sources: {},
     layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#0a0a0a' } }]
   },
-  center: [139.7475, 35.6730],
-  zoom: 12.2,
+  center: [139.7250, 35.6850],
+  zoom: 11.2,
   pitch: 0,
   bearing: 0,
   attributionControl: false,
