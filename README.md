@@ -1,92 +1,185 @@
-# tokyo-strata
+# Tokyo Strata · 東京 22 区 形態地層
 
-**Live**: https://tokyo-strata.vercel.app
+> **東京 22 区・290 万棟の建築物を 4 色の形態地層として描いた都市考古地図**
+> A city archaeology map of Tokyo's 22 wards: 2.9 million buildings as a four-color form-strata.
 
-PoC: visualize Tokyo's building strata as an editorial map (NHK-style city archaeology).
+🌐 **Live**: https://tokyo-strata.vercel.app
+📄 **A3 PDF**: https://tokyo-strata.vercel.app/tokyo-strata.pdf
+✍️ By **Jada Q** · 2026
 
-## Status
-
-**2026-05-02**: Original direction (color by `yearOfConstruction`) **NO-GO** — PLATEAU Chiyoda 2023 has 0/38833 buildings with that attribute.
-
-**Pivot A executed**: form strata using `measuredHeight × fireproofStructureType` (both 100% coverage). **22 of 23 wards loaded (台東 has no PLATEAU 2023 dataset), 2,900,190 buildings, served via 48 MB PMTiles.**
-
-**Editorial mode** (`index.html`): scrolling magazine — 表紙 → 序 → 焦点 7 区 → 出典. BRUTUS / NHK 出版社 city archaeology tone. PMTiles powers all maps.
+---
 
 ![Cover](./screenshots/editorial-cover.png)
+
+## What this is
+
+Tokyo's [Project PLATEAU](https://www.mlit.go.jp/plateau/) publishes a 3D city
+model of all buildings in Tokyo — but **does not publish year-of-construction**
+data. Tokyo Strata works around this by treating **fire-resistance class × height
+as a proxy for era**:
+
+| Color | Rule | Era proxy |
+|---|---|---|
+| 🟫 **朽葉** (decay-leaf brown) | `fp ∈ {その他, 不明} ∧ h<10m` | Pre-war wooden 下町 |
+| 🟨 **利休茶** (rikyū tea) | `fp ∈ {耐火, 準耐火} ∧ h<10m` | Post-war small structures |
+| ⬜ **銀鼠** (silver-grey) | `10 ≤ h < 30m` | High-growth-era mid-rise |
+| ⬜ **月白** (moon-white) | `h ≥ 30m` | Post-bubble towers |
+
+The result is a single map showing the time-layered urban archaeology of Tokyo
+— the **皇居** as a central void, 下町 patches in the periphery, modern towers
+clustered in the central wards.
+
 ![Intro 22 wards](./screenshots/22wards-intro.png)
-![Chiyoda close-up](./screenshots/22wards-chiyoda.png)
-![Production new section](./screenshots/prod-22wards-shinjuku.png)
 
-**Explore mode** (`explore.html`): free zoom/pan over all 22 wards.
+## Cross-analysis: form predicts the future
 
-| Ward span | Buildings |
-|---|---:|
-| 千代田・中央・港・新宿・文京・墨田・江東・品川・目黒・大田・世田谷・渋谷・中野・杉並・豊島・北・荒川・板橋・練馬・足立・葛飾・江戸川 | 2,900,190 |
+Crossing Tokyo Strata with two other personal projects:
 
-See [findings.md](./findings.md) for the full result, coverage stats, and color palette rationale.
+- **[UpgradeMap](https://upgrademap.vercel.app)** — Tokyo 23-ward real-estate
+  upgrade signals (price + population YoY)
+- **[ATLAS](https://github.com/Jada-Q/atlas)** — settlement extinction
+  prediction via cohort-component projection
 
-## Data sources tested
+Headline finding: **月白 ratio × population YoY = r = +0.86** across the 22
+wards. Tower density predicts where people are moving in.
 
-- [PLATEAU 千代田区 2023 CityGML v4](https://www.geospatial.jp/ckan/dataset/plateau-13101-chiyoda-ku-2023) — 1.8 GB zip, 38833 buildings, `yearOfConstruction` not published
+The cross-analysis page identifies three trajectories:
 
-## Add a ward / rebuild tiles
+- **若返り都心** (Rejuvenating Centers): 千代田 / 中央 / 文京 / 港 / 江戸川
+- **安定郊外** (Stable Suburbs): 13 wards in the middle
+- **緩慢成熟** (Slowing Mature): 足立 / 葛飾 / 北 / 墨田 / 台東
+
+And one outlier worth reading: **葛飾 vs 江戸川** — same architectural age
+(朽葉 ≈ 60%) but different mechanisms of renewal. 葛飾's capital prices run
+ahead of population; 江戸川's population runs ahead of capital.
+
+→ Full write-up: https://tokyo-strata.vercel.app/cross
+
+## Pages
+
+| Route | Purpose |
+|---|---|
+| `/` | Editorial scrolling magazine — cover · intro · 7 narrated wards · colophon |
+| `/cross` | Cross-analysis (Strata × UpgradeMap × ATLAS) — scatter charts, classifications, red-team |
+| `/about` | Project explanation, palette rationale, 22-ward stat table |
+| `/explore` | Free zoom/pan over all 22 wards |
+| `/tokyo-strata.pdf` | Print-ready A3 landscape, 10 pages, 6.9 MB |
+
+## Stack
+
+- **Map**: [MapLibre GL JS](https://maplibre.org) 4.7 + [PMTiles](https://github.com/protomaps/PMTiles) 4.3
+- **Tiles**: [tippecanoe](https://github.com/felt/tippecanoe) → 48 MB single-file PMTiles for 2.9M building footprints
+- **Data pipeline**: Python `xml.etree` (CityGML parser) + Nominatim API (landmark labels)
+- **Hosting**: Vercel static (HTTP byte-range serves PMTiles)
+- **PDF**: Headless Chrome via puppeteer-core + system Chrome
+
+## Reproduce locally
 
 ```bash
-# 1) Add a single ward (download + unzip + parse, optionally cleanup udx after)
-./scripts/add-ward.sh <ward-id> <plateau-citygml-zip-url> cleanup
+git clone https://github.com/Jada-Q/tokyo-strata.git
+cd tokyo-strata
 
-# 2) Or batch all 22 wards from scripts/all-wards.txt (skips wards already parsed)
+# Run viewer (PMTiles is committed — works out of the box, but
+# python3's http.server doesn't support byte-range. Use serve:)
+npx serve -l 9877 .
+# open http://localhost:9877/
+```
+
+## Rebuild tiles from scratch (~1 hour, ~30 GB temp disk)
+
+```bash
+# 1) Batch-download + parse all 22 wards (3-5 GB temp space cleared after each)
+brew install tippecanoe pmtiles
 while read ward url; do
   ./scripts/add-ward.sh "$ward" "$url" cleanup
 done < scripts/all-wards.txt
 
-# 3) Rebuild stats + tile (after adding/changing wards)
-python3 scripts/compute_stats.py     # → data/stats.json
-./scripts/build-tiles.sh             # → data/tokyo.pmtiles (~48 MB)
+# 2) Stats + tiles
+python3 scripts/compute_stats.py
+./scripts/build-tiles.sh   # → data/tokyo.pmtiles (48 MB)
 
-# 4) Redeploy
-vercel --prod --yes
-```
+# 3) (optional) Cross-analysis with UpgradeMap data
+python3 scripts/cross_analyze.py
 
-## Run viewer
-
-```bash
-python3 -m http.server 9877
-# open http://localhost:9877/
+# 4) (optional) Cohort projection — ATLAS module
+#    See https://github.com/Jada-Q/atlas
 ```
 
 ## Layout
 
 ```
-index.html                  editorial scrolling magazine (BRUTUS/NHK tone), PMTiles
-explore.html                free interactive map, PMTiles
-data/tokyo.pmtiles          48 MB vector tile (committed)
-data/stats.json             per-ward count/bbox/strata%/avg-max height (committed)
-data/<ward>/                gitignored intermediates — citygml + extracted gml + buildings.geojson
+index.html              editorial scrolling magazine (PMTiles)
+cross.html              cross-analysis with UpgradeMap × ATLAS
+explore.html            free interactive map (PMTiles)
+about.html              project about (BRUTUS-style colophon)
+about.md                shareable summary text (日 + 中)
+findings.md             PoC log — what was tried, what failed, what pivoted
+cross-report.md         cross-analysis findings in markdown
+data/
+  tokyo.pmtiles         48 MB vector tile (committed)
+  stats.json            per-ward count/bbox/strata%/avg-max height
+  cross.json            UpgradeMap × Strata joined values
+  cohort.json           50-year cohort projection per ward
+  landmarks.json        50 markers (palace/parks/rivers/etc) via Nominatim
 scripts/
-  add-ward.sh               one-shot pipeline: download + unzip + parse (with cleanup)
-  all-wards.txt             ward-id + URL list for batch processing
-  parse_to_geojson.py       CityGML → GeoJSON (footprint + height + fireproof + usage)
-  check-year-coverage.sh    yearOfConstruction probe (kept as reference; always 0% on PLATEAU)
-  compute_stats.py          per-ward stats → data/stats.json
-  merge_to_ndjson.py        per-ward GeoJSON → NDJSON for tippecanoe
-  build-tiles.sh            merge → tippecanoe → pmtiles (full tile rebuild)
-screenshots/                rendered samples (committed)
-findings.md                 PoC results log
+  add-ward.sh           one-shot ward pipeline
+  all-wards.txt         22 ward URLs
+  parse_to_geojson.py   CityGML → GeoJSON
+  compute_stats.py      → data/stats.json
+  build-tiles.sh        merge → tippecanoe → pmtiles
+  cross_analyze.py      Strata × UpgradeMap join + Pearson r
+  fetch-landmarks.py    Nominatim batch geocode
+  generate-pdf.js       puppeteer-core → A3 PDF
+social/                 ready-to-post copy (Twitter / note / 小红书)
 ```
 
-## Tile pipeline
+## Findings
 
-```
-22 PLATEAU CityGML zips (~30 GB total)
-  ↓ unzip + parse (parse_to_geojson.py)
-22 buildings.geojson (~1 GB total)
-  ↓ merge_to_ndjson.py
-all-buildings.ndjson (1.2 GB, 2.9M features)
-  ↓ tippecanoe -Z9 -z14 --drop-densest-as-needed --simplification=8
-tokyo.mbtiles (48 MB)
-  ↓ pmtiles convert
-tokyo.pmtiles (48 MB)
-  ↓ vercel
-https://tokyo-strata.vercel.app/data/tokyo.pmtiles (HTTP range requests)
-```
+### Headline
+
+| Metric | Value |
+|---|---:|
+| 22 ward 形態 coverage | 290 万棟 (100% fp + height) |
+| `yearOfConstruction` coverage | **0%** (PLATEAU does not publish) |
+| Strongest cross-correlation | 月白% × pop YoY = **r = +0.86** |
+| Highest 古層率 | 練馬 73.9% |
+| Highest 月白率 | 千代田 18.5% |
+| Tallest building in dataset | 墨田 634 m (東京スカイツリー) |
+| 50-year pop projection (highest) | 千代田 +24.5% |
+| 50-year pop projection (lowest) | 台東 +2.0% |
+
+### Surprises
+
+- **Every Tokyo ward grows over 50 years** when you run the same cohort-component
+  algorithm that predicts rural extinction in Akita. Tokyo doesn't shrink — it
+  accelerates.
+- **江戸川 vs 葛飾**: same form age (朽葉 ~60%), but 葛飾 sees capital first,
+  江戸川 sees population first. Two distinct mechanisms of 下町 renewal.
+- **Form ↔ migration**: tower ratio is the single best predictor of where
+  people are actually moving to. Architecture isn't passive — it's a leading
+  indicator.
+
+## Caveats
+
+- `n=22`, so r=+0.86 has wide confidence intervals
+- Cross-section data only; "form predicts the future" needs longitudinal verification
+- Cohort projection assumes 2015–2020 trends continue linearly for 50 years
+- Selection bias in PLATEAU coverage (台東 ward absent from 2023 dataset)
+
+Full red team: https://tokyo-strata.vercel.app/cross#redteam
+
+## License
+
+- **Code**: MIT — see [LICENSE](./LICENSE)
+- **Editorial content** (Japanese narrative, screenshots): © Jada Q 2026, attribution preserved
+- **Underlying data**: PLATEAU is CC BY 4.0 (国土交通省) — preserve attribution per CC BY terms
+- **Cohort method**: public-domain demographic technique (cohort-component projection)
+
+## Credits
+
+- **Project PLATEAU** (国土交通省 + G空間情報センター) — open 3D city data
+- **Reinfolib** (国交省 不動産取引価格) — transaction prices
+- **e-Stat** (総務省 国勢調査) — population by age cohorts
+- **MapLibre GL** + **PMTiles** + **tippecanoe** + **Hiragino Mincho ProN**
+- **Cohort-component projection method** adapted from Project ATLAS
+- Edited & developed by **Jada Q · 2026**
