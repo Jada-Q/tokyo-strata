@@ -3,6 +3,7 @@ data/*
 !data/tokyo.pmtiles
 !data/cross.json
 !data/landmarks.json
+!data/cohort.json
 *.zip
 *.gml
 *.mbtiles

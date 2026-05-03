@@ -164,6 +164,7 @@
   <a href="#categories">3 類分類</a>
   <a href="#hypothesis">仮説</a>
   <a href="#case-katsushika">葛飾</a>
+  <a href="#cohort">50 年後</a>
   <a href="#redteam">紅隊</a>
   <a href="#colophon">出典</a>
 </nav>
@@ -263,6 +264,42 @@
   <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 16px;">※ 仮説 ①〜④ は cross-section データと一般的な不動産論からの推測であり、各仮説の検証には登記情報・取引内訳・買い手国籍データなど追加調査が必要。</p>
 </section>
 
+<section id="cohort">
+  <div class="super">50 年 後 の 地 層</div>
+  <h2>東 京 は<br>消 滅 し な い<br>—— 加 速 す る だ け</h2>
+
+  <p class="lead">秋田県の集落消滅予測アルゴリズム（ATLAS Project）を東京 23 区に適用すると、別の事実が浮かぶ——東京 22 区はすべて 50 年後に人口が増える。日本全国の縮小トレンドと真逆。</p>
+
+  <p>2015 → 2020 の cohort survival ratio から推計したところ、千代田は +24.5%、文京 +21.6%、中央 +18.5%——都心は加速。最も停滞する台東でも +2.0% で「消滅」のスケールには遠い。</p>
+
+  <p>言い換えれば、ATLAS の「集落消滅」概念は東京には適用されない。代わりに「加速増の都心 vs 緩慢成熟の下町」という別の二極が現れる。</p>
+
+  <div class="chart" id="chart-cohort"></div>
+  <p class="chart-caption">横軸：朽葉率 (古層率) ／ 縦軸：50 年後の人口変化率（cohort projection 2020 → 2070）。 朽葉率が低い区ほど人口加速、高い区ほど緩慢——形態が未来の人口軌跡と相関する。</p>
+
+  <h3>3 つの未来軌跡</h3>
+
+  <div class="cat-block cat-mature">
+    <h3>若返り都心（人口 +17〜25%）</h3>
+    <div class="wards" id="cohort-rejuvenating">—</div>
+    <p>千代田・中央・文京・港・江戸川。都心 + 都心隣接 + 大規模再開発が進む湾岸下流。50 年後人口がもっとも伸びる。</p>
+  </div>
+
+  <div class="cat-block cat-rising">
+    <h3>安定郊外（人口 +10〜17%）</h3>
+    <div class="wards" id="cohort-stable">—</div>
+    <p>練馬・世田谷・杉並・中野・大田・品川・目黒・江東・板橋・豊島・新宿・渋谷・荒川。郊外住宅地と中間層の区。穏やかに増える「中庸の地層」。</p>
+  </div>
+
+  <div class="cat-block cat-forgotten">
+    <h3>緩慢成熟（人口 +2〜10%）</h3>
+    <div class="wards" id="cohort-slowing">—</div>
+    <p>足立・葛飾・北・墨田・台東。下町中心の北部・東部。人口は微増だが速度は最も緩い。形態の朽葉率も高く「形態と未来軌跡が両方とも保守的」な層。</p>
+  </div>
+
+  <p class="moment">注：cohort projection は 2015→2020 の survival ratio + fertility が今後 50 年継続すると仮定する単純モデル。経済変動・出生率反転・移民政策・自然災害は未モデル化。</p>
+</section>
+
 <section id="redteam">
   <div class="super">紅隊（自検）</div>
   <h2>こ の 分 析 の 限 界</h2>
@@ -360,6 +397,62 @@ function renderCorrTable(corr) {
   }).join('');
 }
 
+function renderCohortScatter(containerId, wards) {
+  const W = 880, H = 480;
+  const M = { l: 70, r: 30, t: 30, b: 60 };
+  const xs = wards.map(w => w.kuchiba);
+  const ys = wards.map(w => w.pop_change_50y_pct);
+  const xmin = Math.min(...xs), xmax = Math.max(...xs);
+  const ymin = Math.min(...ys, 0), ymax = Math.max(...ys);
+  const xPad = (xmax - xmin) * 0.05, yPad = (ymax - ymin) * 0.1;
+  const x0 = xmin - xPad, x1 = xmax + xPad;
+  const y0 = ymin - yPad, y1 = ymax + yPad;
+  const sx = v => M.l + (v - x0) / (x1 - x0) * (W - M.l - M.r);
+  const sy = v => H - M.b - (v - y0) / (y1 - y0) * (H - M.t - M.b);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`;
+  svg += `<line class="axis-line" x1="${M.l}" y1="${H-M.b}" x2="${W-M.r}" y2="${H-M.b}"/>`;
+  svg += `<line class="axis-line" x1="${M.l}" y1="${M.t}" x2="${M.l}" y2="${H-M.b}"/>`;
+  for (let i = 0; i <= 5; i++) {
+    const v = x0 + (x1 - x0) * (i / 5);
+    const x = sx(v);
+    svg += `<line class="axis-line" x1="${x}" y1="${H-M.b}" x2="${x}" y2="${H-M.b+5}"/>`;
+    svg += `<text class="axis-label" x="${x}" y="${H-M.b+22}" text-anchor="middle">${v.toFixed(0)}</text>`;
+  }
+  for (let i = 0; i <= 5; i++) {
+    const v = y0 + (y1 - y0) * (i / 5);
+    const y = sy(v);
+    svg += `<line class="axis-line" x1="${M.l-5}" y1="${y}" x2="${M.l}" y2="${y}"/>`;
+    svg += `<text class="axis-label" x="${M.l-10}" y="${y+4}" text-anchor="end">${v.toFixed(0)}</text>`;
+  }
+  svg += `<text class="axis-label" x="${(W-M.l-M.r)/2 + M.l}" y="${H-12}" text-anchor="middle">朽葉% (古層率)</text>`;
+  svg += `<text class="axis-label" x="${20}" y="${(H-M.t-M.b)/2 + M.t}" text-anchor="middle" transform="rotate(-90 20 ${(H-M.t-M.b)/2 + M.t})">2070 人口変化 % (vs 2020)</text>`;
+  for (const w of wards) {
+    const x = sx(w.kuchiba), y = sy(w.pop_change_50y_pct);
+    let c;
+    if (w.pop_change_50y_pct >= 17) c = STRATUM_COLORS.mature;       // 若返り
+    else if (w.pop_change_50y_pct >= 10) c = STRATUM_COLORS.rising;  // 安定
+    else c = STRATUM_COLORS.forgotten;                                // 緩慢
+    svg += `<circle class="point" cx="${x}" cy="${y}" r="6" fill="${c}" opacity="0.9"/>`;
+    svg += `<text class="point-label" x="${x+10}" y="${y+4}">${w.jp}</text>`;
+  }
+  svg += `</svg>`;
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+function renderCohortCategories(cohort) {
+  const rejuv = [], stable = [], slow = [];
+  for (const [slug, d] of Object.entries(cohort)) {
+    const pct = d.pop_change_50y_pct;
+    if (pct >= 17) rejuv.push(d.jp);
+    else if (pct >= 10) stable.push(d.jp);
+    else slow.push(d.jp);
+  }
+  document.getElementById('cohort-rejuvenating').textContent = rejuv.join(' · ');
+  document.getElementById('cohort-stable').textContent = stable.join(' · ');
+  document.getElementById('cohort-slowing').textContent = slow.join(' · ');
+}
+
 function renderCategories(wards) {
   const cats = { mature: [], rising: [], forgotten: [] };
   for (const w of wards) {
@@ -372,10 +465,24 @@ function renderCategories(wards) {
 }
 
 (async function () {
-  const data = await (await fetch('./data/cross.json')).json();
+  const data = await (await fetch('./data/cross.json?v=2')).json();
   renderScatter('chart-main', data.wards, 'tsukishiro', 'pop_yoy', '月白% (高層 30m+)', '人口 YoY %');
   renderCorrTable(data.correlations);
   renderCategories(data.wards);
+
+  // Cohort projection (Tokyo Strata × ATLAS)
+  try {
+    const cohort = await (await fetch('./data/cohort.json?v=2')).json();
+    const wardsWithCohort = data.wards.map(w => ({
+      ...w,
+      pop_change_50y_pct: cohort[w.id] ? cohort[w.id].pop_change_50y_pct : null,
+    })).filter(w => w.pop_change_50y_pct !== null);
+    // Custom scatter renderer for cohort (forgotten lowtowns get warm tone)
+    renderCohortScatter('chart-cohort', wardsWithCohort);
+    renderCohortCategories(cohort);
+  } catch (e) {
+    console.warn('cohort data not loaded:', e);
+  }
 
   // TOC active
   const tocLinks = document.querySelectorAll('#toc a');
