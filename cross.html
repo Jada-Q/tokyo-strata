@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-i18n-title="cross.title">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,6 +28,9 @@
     color: #c8c4be;
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
     font-feature-settings: "palt" 1;
+  }
+  html[lang="zh-CN"] body {
+    font-family: 'Songti SC', 'STSong', 'Source Han Serif SC', 'Noto Serif CJK SC', '宋体', SimSun, 'Hiragino Mincho ProN', serif;
   }
 
   section {
@@ -141,11 +144,75 @@
   nav.crumb a { color: inherit; text-decoration: none; }
   nav.crumb a:hover { color: #d8d2c8; }
 
+  /* Language switcher — kebab menu */
+  #lang-switch {
+    position: fixed; top: 18px; right: 22px; z-index: 60;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  }
+  #lang-toggle {
+    background: transparent; border: none; padding: 4px 8px;
+    color: #6b6660; cursor: pointer;
+    font: inherit; font-size: 20px; line-height: 1;
+  }
+  #lang-toggle:hover, #lang-toggle[aria-expanded="true"] { color: #e8e4dc; }
+  #lang-menu {
+    position: absolute; top: 100%; right: 0;
+    margin-top: 6px;
+    background: #15110f;
+    border: 1px solid #2a2622;
+    display: flex; flex-direction: column;
+    padding: 4px 0;
+    min-width: 96px;
+  }
+  #lang-menu[hidden] { display: none; }
+  #lang-menu button {
+    background: transparent; border: none;
+    padding: 7px 16px; cursor: pointer;
+    color: #6b6660;
+    font-family: inherit;
+    font-size: 11px; letter-spacing: 3px;
+    text-align: left; line-height: 1.5;
+    width: 100%;
+  }
+  #lang-menu button:hover { color: #d8d2c8; background: rgba(255,255,255,0.04); }
+  #lang-menu button.active { color: #e8e4dc; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    html { scroll-snap-type: none; }
+    section { min-height: auto; padding: 64px 22px 56px; scroll-snap-align: none; }
+    .super { font-size: 9px; letter-spacing: 5px; }
+    h1 { font-size: 26px; letter-spacing: 7px; line-height: 1.55; max-width: none; }
+    h2 { font-size: 18px; letter-spacing: 5px; margin-bottom: 24px; }
+    h3 { font-size: 12px; letter-spacing: 3px; }
+    p { font-size: 12px; letter-spacing: 1px; line-height: 1.95; max-width: none; }
+    p.lead { font-size: 13.5px; }
+    p.moment { font-size: 11px; line-height: 1.85; }
+    #cover { padding: 80px 22px; }
+    #cover h1 { font-size: 24px; letter-spacing: 6px; }
+    #cover .meta { font-size: 10px; letter-spacing: 2px; margin-top: 36px; }
+    table { font-size: 11px; }
+    th, td { padding: 8px 6px; }
+    .cat-block { padding: 16px 18px; margin: 24px 0; }
+    .cat-block .wards { font-size: 12px; letter-spacing: 2px; }
+    .redteam { padding: 16px 18px; }
+    .redteam ol { font-size: 11px; line-height: 1.9; }
+    #colophon h2 { font-size: 14px; letter-spacing: 5px; }
+    #colophon p { font-size: 11px; letter-spacing: 1px; }
+    #toc { display: none; }
+    nav.crumb { top: 14px; left: 14px; font-size: 9px; letter-spacing: 3px; }
+    #lang-switch { top: 10px; right: 10px; }
+    #lang-toggle { font-size: 18px; padding: 4px 6px; }
+    #lang-menu { min-width: 88px; }
+    #lang-menu button { padding: 8px 14px; font-size: 11px; letter-spacing: 2px; }
+    .chart { margin: 20px auto 8px; }
+  }
+
   @media print {
     html { scroll-snap-type: none !important; }
     body { background: #fff !important; color: #222 !important; }
     section { min-height: auto; padding: 24mm 22mm; page-break-after: always; }
-    #toc, nav.crumb { display: none; }
+    #toc, nav.crumb, #lang-switch { display: none; }
     h1, h2, h3, p, td { color: #222 !important; }
     .axis-label { fill: #555 !important; }
     .point-label { fill: #222 !important; }
@@ -154,213 +221,224 @@
 </head>
 <body>
 
-<nav class="crumb"><a href="/">← TOKYO STRATA</a></nav>
+<nav id="lang-switch">
+  <button id="lang-toggle" aria-label="Language" aria-expanded="false" aria-controls="lang-menu">⋮</button>
+  <div id="lang-menu" hidden>
+    <button data-lang-btn="ja">JP</button>
+    <button data-lang-btn="zh">CN</button>
+    <button data-lang-btn="en">EN</button>
+  </div>
+</nav>
+
+<nav class="crumb"><a href="/" data-i18n="common.crumb.home">← TOKYO STRATA</a></nav>
 
 <nav id="toc">
-  <a href="#cover">表紙</a>
-  <a href="#intro">序</a>
-  <a href="#scatter">主散布図</a>
-  <a href="#corr">相関表</a>
-  <a href="#categories">3 類分類</a>
-  <a href="#hypothesis">仮説</a>
-  <a href="#case-katsushika">葛飾</a>
-  <a href="#two-mechanisms">東部下町</a>
-  <a href="#cohort">50 年後</a>
-  <a href="#redteam">紅隊</a>
-  <a href="#colophon">出典</a>
+  <a href="#cover" data-i18n="cross.toc.cover">表紙</a>
+  <a href="#intro" data-i18n="cross.toc.intro">序</a>
+  <a href="#scatter" data-i18n="cross.toc.scatter">主散布図</a>
+  <a href="#corr" data-i18n="cross.toc.corr">相関表</a>
+  <a href="#categories" data-i18n="cross.toc.categories">3 類分類</a>
+  <a href="#hypothesis" data-i18n="cross.toc.hypothesis">仮説</a>
+  <a href="#case-katsushika" data-i18n="cross.toc.katsushika">葛飾</a>
+  <a href="#two-mechanisms" data-i18n="cross.toc.twomech">東部下町</a>
+  <a href="#cohort" data-i18n="cross.toc.cohort">50 年後</a>
+  <a href="#redteam" data-i18n="cross.toc.redteam">紅隊</a>
+  <a href="#colophon" data-i18n="cross.toc.colophon">出典</a>
 </nav>
 
 <section id="cover">
-  <div class="super">CROSS · 2026</div>
-  <h1>形 態 地 層<br>×<br>上 昇 シ グ ナ ル</h1>
-  <div class="meta">Tokyo Strata × UpgradeMap<br>22 区・290 万棟 × 不動産価格 × 人口動態</div>
-  <div class="scroll-hint">SCROLL ↓</div>
+  <div class="super" data-i18n="cross.cover.super">CROSS · 2026</div>
+  <h1 data-i18n="cross.cover.h1" data-i18n-html>形 態 地 層<br>×<br>上 昇 シ グ ナ ル</h1>
+  <div class="meta" data-i18n="cross.cover.meta" data-i18n-html>Tokyo Strata × UpgradeMap<br>22 区・290 万棟 × 不動産価格 × 人口動態</div>
+  <div class="scroll-hint" data-i18n="cross.cover.scroll">SCROLL ↓</div>
 </section>
 
 <section id="intro">
-  <div class="super">序</div>
-  <h2>形態は時代を<br>予測する</h2>
-  <p class="lead">Tokyo Strata の 4 色形態地層と UpgradeMap の上昇シグナルを 22 区で交差させたところ、形態が現在進行形の都市変容と統計的に強く相関することが判明した。</p>
-  <p>もっとも強い軸：<b>月白比率 × 人口 YoY、Pearson r = +0.86</b>。現代塔の多い区ほど、人口流入が著しい。</p>
-  <p>形態地層は単なる「過去の積層」ではなく、現代の不動産・人口動態を予測する代理指標として機能する——それが今回の発見である。</p>
+  <div class="super" data-i18n="cross.intro.super">序</div>
+  <h2 data-i18n="cross.intro.h2" data-i18n-html>形態は時代を<br>予測する</h2>
+  <p class="lead" data-i18n="cross.intro.lead">Tokyo Strata の 4 色形態地層と UpgradeMap の上昇シグナルを 22 区で交差させたところ、形態が現在進行形の都市変容と統計的に強く相関することが判明した。</p>
+  <p data-i18n="cross.intro.p1" data-i18n-html>もっとも強い軸：<b>月白比率 × 人口 YoY、Pearson r = +0.86</b>。現代塔の多い区ほど、人口流入が著しい。</p>
+  <p data-i18n="cross.intro.p2">形態地層は単なる「過去の積層」ではなく、現代の不動産・人口動態を予測する代理指標として機能する——それが今回の発見である。</p>
 </section>
 
 <section id="scatter">
-  <div class="super">主散布図</div>
-  <h2>月白% × 人口 YoY</h2>
-  <p>横軸：月白（高層 30m+）の比率。縦軸：人口の年次増減率。</p>
+  <div class="super" data-i18n="cross.scatter.super">主散布図</div>
+  <h2 data-i18n="cross.scatter.h2">月白% × 人口 YoY</h2>
+  <p data-i18n="cross.scatter.p1">横軸：月白（高層 30m+）の比率。縦軸：人口の年次増減率。</p>
   <div class="chart" id="chart-main"></div>
-  <p class="moment">皇居周辺の都心 3 区（千代田・中央・港）が右上に集中、郊外大区（練馬・世田谷・杉並）が左下に集中する。月白の存在自体が「人を呼ぶ建築物」になっているのか、それとも人口流入が塔を建てさせているのか——相関は因果を語らない。</p>
-  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 8px;">※ Pearson r ∈ [−1, +1]。社会科学では |r| &gt; 0.5 を中等、&gt; 0.7 を強相関とする。n=22 のため信頼区間は広い。</p>
+  <p class="moment" data-i18n="cross.scatter.moment">皇居周辺の都心 3 区（千代田・中央・港）が右上に集中、郊外大区（練馬・世田谷・杉並）が左下に集中する。月白の存在自体が「人を呼ぶ建築物」になっているのか、それとも人口流入が塔を建てさせているのか——相関は因果を語らない。</p>
+  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 8px;" data-i18n="cross.scatter.foot">※ Pearson r ∈ [−1, +1]。社会科学では |r| &gt; 0.5 を中等、&gt; 0.7 を強相関とする。n=22 のため信頼区間は広い。</p>
 </section>
 
 <section id="corr">
-  <div class="super">相関表</div>
-  <h2>Pearson r ランキング</h2>
-  <p>Strata 軸（朽葉・利休茶・銀鼠・月白・平均高）と UpgradeMap 軸（upgrade score・price YoY・pop YoY）の全組み合わせの Pearson 相関係数。22 区サンプル。</p>
+  <div class="super" data-i18n="cross.corr.super">相関表</div>
+  <h2 data-i18n="cross.corr.h2">Pearson r ランキング</h2>
+  <p data-i18n="cross.corr.p1">Strata 軸（朽葉・利休茶・銀鼠・月白・平均高）と UpgradeMap 軸（upgrade score・price YoY・pop YoY）の全組み合わせの Pearson 相関係数。22 区サンプル。</p>
   <table id="corr-table">
-    <thead><tr><th>軸</th><th style="text-align:right;">r</th></tr></thead>
+    <thead><tr><th data-i18n="cross.corr.th.axis">軸</th><th style="text-align:right;">r</th></tr></thead>
     <tbody></tbody>
   </table>
-  <p class="moment">月白系（現代塔）はすべての UpgradeMap 軸と正相関、朽葉系（古層）はすべて負相関。形態地層のグラデーションが、そのまま都市更新のグラデーションに対応する。</p>
+  <p class="moment" data-i18n="cross.corr.moment">月白系（現代塔）はすべての UpgradeMap 軸と正相関、朽葉系（古層）はすべて負相関。形態地層のグラデーションが、そのまま都市更新のグラデーションに対応する。</p>
 </section>
 
 <section id="categories">
-  <div class="super">3 類 分 類</div>
-  <h2>22 区を 3 つに 分 け る</h2>
-  <p>形態と signal の組み合わせから、22 区はおおよそ 3 つに分類できる。</p>
+  <div class="super" data-i18n="cross.cat.super">3 類 分 類</div>
+  <h2 data-i18n="cross.cat.h2">22 区を 3 つに 分 け る</h2>
+  <p data-i18n="cross.cat.p1">形態と signal の組み合わせから、22 区はおおよそ 3 つに分類できる。</p>
 
   <div class="cat-block cat-mature">
-    <h3>成熟した都心</h3>
+    <h3 data-i18n="cross.cat.mature.h3">成熟した都心</h3>
     <div class="wards" id="cat-mature-wards">—</div>
-    <p>月白比率 11–18%、active signal、価格上昇 +11〜19%、人口流入 +7〜20%。すでに升级した区——投资窗口は収斂。</p>
+    <p data-i18n="cross.cat.mature.p">月白比率 11–18%、active signal、価格上昇 +11〜19%、人口流入 +7〜20%。すでに升级した区——投资窗口は収斂。</p>
   </div>
 
   <div class="cat-block cat-rising">
-    <h3>上昇中の下町</h3>
+    <h3 data-i18n="cross.cat.rising.h3">上昇中の下町</h3>
     <div class="wards" id="cat-rising-wards">—</div>
-    <p>朽葉比率 40〜74% という古層の多さに反して、upgrade score &gt; 65、価格上昇 &gt; 6%。朽葉的城市基盤に新しい資本が注入されている。投资 sweet spot 候補。</p>
+    <p data-i18n="cross.cat.rising.p">朽葉比率 40〜74% という古層の多さに反して、upgrade score &gt; 65、価格上昇 &gt; 6%。朽葉的城市基盤に新しい資本が注入されている。投资 sweet spot 候補。</p>
   </div>
 
   <div class="cat-block cat-forgotten">
-    <h3>忘れられた下町</h3>
+    <h3 data-i18n="cross.cat.forgotten.h3">忘れられた下町</h3>
     <div class="wards" id="cat-forgotten-wards">—</div>
-    <p>朽葉比率 57〜61%、score &lt; 65、価格上昇 &lt; 5%。古層が支配的だが UpgradeMap シグナルは弱い。「進化を待っている」区——あるいは中立に「低 momentum 高古層」と読むべき。</p>
+    <p data-i18n="cross.cat.forgotten.p">朽葉比率 57〜61%、score &lt; 65、価格上昇 &lt; 5%。古層が支配的だが UpgradeMap シグナルは弱い。「進化を待っている」区——あるいは中立に「低 momentum 高古層」と読むべき。</p>
   </div>
 </section>
 
 <section id="hypothesis">
-  <div class="super">投资 仮説</div>
-  <h2>下 町 に 資 本 が 流 入 す る 初 期</h2>
-  <p>もっとも興味深いのは <b>葛飾</b>——朽葉 59.5%（22 区中 6 番目に古い）、にもかかわらず price YoY +12.6%（22 区中前列）。形態がもっとも古い街に資本が入りつつある。</p>
-  <p><b>練馬</b> は朽葉 73.9% で 22 区中もっとも古層率高い区が「early upgrade」signal を出している。郊外住宅地に新しい流れが見えるか。</p>
-  <p class="moment">仮説：月白比率 &lt; 5% ＋ price YoY &gt; 6% ＋ early/active signal = 老町に資本が流入する初期段階。該当：葛飾・練馬・杉並・墨田。</p>
+  <div class="super" data-i18n="cross.hypothesis.super">投资 仮説</div>
+  <h2 data-i18n="cross.hypothesis.h2">下 町 に 資 本 が 流 入 す る 初 期</h2>
+  <p data-i18n="cross.hypothesis.p1" data-i18n-html>もっとも興味深いのは <b>葛飾</b>——朽葉 59.5%（22 区中 6 番目に古い）、にもかかわらず price YoY +12.6%（22 区中前列）。形態がもっとも古い街に資本が入りつつある。</p>
+  <p data-i18n="cross.hypothesis.p2" data-i18n-html><b>練馬</b> は朽葉 73.9% で 22 区中もっとも古層率高い区が「early upgrade」signal を出している。郊外住宅地に新しい流れが見えるか。</p>
+  <p class="moment" data-i18n="cross.hypothesis.moment">仮説：月白比率 &lt; 5% ＋ price YoY &gt; 6% ＋ early/active signal = 老町に資本が流入する初期段階。該当：葛飾・練馬・杉並・墨田。</p>
 </section>
 
 <section id="case-katsushika">
-  <div class="super">CASE STUDY · 葛飾</div>
-  <h2>形 態 が 変 わ る 前 に<br>価 格 が 動 く</h2>
+  <div class="super" data-i18n="cross.case.super">CASE STUDY · 葛飾</div>
+  <h2 data-i18n="cross.case.h2" data-i18n-html>形 態 が 変 わ る 前 に<br>価 格 が 動 く</h2>
 
-  <p>22 区の中で、形態と価格の解離がもっとも大きい区は <b>葛飾</b>。</p>
+  <p data-i18n="cross.case.p1" data-i18n-html>22 区の中で、形態と価格の解離がもっとも大きい区は <b>葛飾</b>。</p>
 
   <table style="max-width: 520px; margin: 24px 0;">
     <tbody>
-      <tr><td>朽葉率</td><td class="r">59.5% （22 区中 6 番目に古い）</td></tr>
-      <tr><td>価格 YoY</td><td class="r pos">+12.6% （23 区中 4 番目に高い）</td></tr>
-      <tr><td>月白率</td><td class="r">0.5% （22 区中 4 番目に低い）</td></tr>
-      <tr><td>signal</td><td class="r">early upgrade</td></tr>
+      <tr><td data-i18n="cross.case.row.kuchiba">朽葉率</td><td class="r" data-i18n="cross.case.row.kuchiba.v">59.5% （22 区中 6 番目に古い）</td></tr>
+      <tr><td data-i18n="cross.case.row.price">価格 YoY</td><td class="r pos" data-i18n="cross.case.row.price.v">+12.6% （23 区中 4 番目に高い）</td></tr>
+      <tr><td data-i18n="cross.case.row.tsuki">月白率</td><td class="r" data-i18n="cross.case.row.tsuki.v">0.5% （22 区中 4 番目に低い）</td></tr>
+      <tr><td data-i18n="cross.case.row.signal">signal</td><td class="r" data-i18n="cross.case.row.signal.v">early upgrade</td></tr>
     </tbody>
   </table>
 
-  <p><b>矛盾点</b>——形態は最も古い下町の一つ、しかし価格上昇率は都心のタワー区（中央 +19.3%、港 +16.2%、渋谷 +15.4%）に追いつく勢い。建物はまだ変わっていないのに、価格が先に動いている。</p>
+  <p data-i18n="cross.case.contradict" data-i18n-html><b>矛盾点</b>——形態は最も古い下町の一つ、しかし価格上昇率は都心のタワー区（中央 +19.3%、港 +16.2%、渋谷 +15.4%）に追いつく勢い。建物はまだ変わっていないのに、価格が先に動いている。</p>
 
-  <h3>4 つの仮説（推測・未検証）</h3>
-  <p>① <b>都心高価の外溢</b>——千代田・中央・港 はすでに上昇しきり、資本が「比較的安い」下町を発見した可能性。<br>
+  <h3 data-i18n="cross.case.h3.4hyp">4 つの仮説（推測・未検証）</h3>
+  <p data-i18n="cross.case.4hyp.body" data-i18n-html>① <b>都心高価の外溢</b>——千代田・中央・港 はすでに上昇しきり、資本が「比較的安い」下町を発見した可能性。<br>
   ② <b>民泊・短期賃貸の収益期待</b>——柴又は『男はつらいよ』の聖地で観光地。短期賃貸の収益見込みが取得価格を押し上げる。<br>
   ③ <b>外国人買い手の参入</b>——下町は entry barrier が低く、新規移民・海外投資家が買いやすい。<br>
   ④ <b>形態先行のリーディングシグナル</b>——朽葉率が高い = まだ建て替わっていない = 12〜24 ヶ月後の月白塔建設の前兆かもしれない。</p>
 
-  <p class="moment">「上昇中の下町」6 区（葛飾・練馬・杉並・品川・渋谷・豊島）の中で、葛飾は<b>形態 / 価格 gap がもっとも大きい</b>——価格は先に動き、形態の更新はこれから。投资視角では early window、文化保育視角では「下町が静かに資本に書き換えられつつある」前兆。</p>
+  <p class="moment" data-i18n="cross.case.moment" data-i18n-html>「上昇中の下町」6 区（葛飾・練馬・杉並・品川・渋谷・豊島）の中で、葛飾は<b>形態 / 価格 gap がもっとも大きい</b>——価格は先に動き、形態の更新はこれから。投资視角では early window、文化保育視角では「下町が静かに資本に書き換えられつつある」前兆。</p>
 
-  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 16px;">※ 仮説 ①〜④ は cross-section データと一般的な不動産論からの推測であり、各仮説の検証には登記情報・取引内訳・買い手国籍データなど追加調査が必要。</p>
+  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 16px;" data-i18n="cross.case.foot">※ 仮説 ①〜④ は cross-section データと一般的な不動産論からの推測であり、各仮説の検証には登記情報・取引内訳・買い手国籍データなど追加調査が必要。</p>
 </section>
 
 <section id="two-mechanisms">
-  <div class="super">東 部 下 町 の 二 つ の 発 見</div>
-  <h2>葛 飾 と 江 戸 川<br>同 じ 古 さ 、<br>違 う 未 来 軌 跡</h2>
+  <div class="super" data-i18n="cross.twomech.super">東 部 下 町 の 二 つ の 発 見</div>
+  <h2 data-i18n="cross.twomech.h2" data-i18n-html>葛 飾 と 江 戸 川<br>同 じ 古 さ 、<br>違 う 未 来 軌 跡</h2>
 
-  <p class="lead">朽葉率がほぼ等しい二つの東部下町——葛飾 (59.5%) と江戸川 (61.4%)——が、別々のデータ軸で別々の outlier として浮かび上がる。</p>
+  <p class="lead" data-i18n="cross.twomech.lead">朽葉率がほぼ等しい二つの東部下町——葛飾 (59.5%) と江戸川 (61.4%)——が、別々のデータ軸で別々の outlier として浮かび上がる。</p>
 
   <table style="max-width: 620px; margin: 24px 0;">
     <thead>
       <tr>
         <th></th>
-        <th class="num">葛飾</th>
-        <th class="num">江戸川</th>
+        <th class="num" data-i18n="cross.twomech.th.katsu">葛飾</th>
+        <th class="num" data-i18n="cross.twomech.th.edogawa">江戸川</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>朽葉率（形態古）</td><td class="r">59.5%</td><td class="r">61.4%</td></tr>
-      <tr><td>当下 価格 YoY</td><td class="r pos">+12.6% （高）</td><td class="r">+3.6% （低）</td></tr>
-      <tr><td>50 年後 人口予測</td><td class="r">+8.9% （緩慢）</td><td class="r pos">+18.8% （若返り）</td></tr>
-      <tr><td>該当カテゴリー</td><td class="r">上昇中の下町</td><td class="r">若返り都心</td></tr>
+      <tr><td data-i18n="cross.twomech.row.kuchiba">朽葉率（形態古）</td><td class="r">59.5%</td><td class="r">61.4%</td></tr>
+      <tr><td data-i18n="cross.twomech.row.price">当下 価格 YoY</td><td class="r pos" data-i18n="cross.twomech.cell.katsu.price">+12.6% （高）</td><td class="r" data-i18n="cross.twomech.cell.edo.price">+3.6% （低）</td></tr>
+      <tr><td data-i18n="cross.twomech.row.50yr">50 年後 人口予測</td><td class="r" data-i18n="cross.twomech.cell.katsu.50yr">+8.9% （緩慢）</td><td class="r pos" data-i18n="cross.twomech.cell.edo.50yr">+18.8% （若返り）</td></tr>
+      <tr><td data-i18n="cross.twomech.row.cat">該当カテゴリー</td><td class="r" data-i18n="cross.twomech.cell.katsu.cat">上昇中の下町</td><td class="r" data-i18n="cross.twomech.cell.edo.cat">若返り都心</td></tr>
     </tbody>
   </table>
 
-  <h3>葛飾型——資本が先に動く</h3>
-  <p>不動産価格が先行して上昇しているが、cohort projection（2015–2020 実人口データ基準）の長期人口予測は緩慢。「投資資金 vs 実際居住人口」が乖離している——価格は上がったが人はそれほど来ていない。<b>投機・民泊・海外買い手のシグナル</b>。</p>
+  <h3 data-i18n="cross.twomech.h3.katsu">葛飾型——資本が先に動く</h3>
+  <p data-i18n="cross.twomech.p.katsu" data-i18n-html>不動産価格が先行して上昇しているが、cohort projection（2015–2020 実人口データ基準）の長期人口予測は緩慢。「投資資金 vs 実際居住人口」が乖離している——価格は上がったが人はそれほど来ていない。<b>投機・民泊・海外買い手のシグナル</b>。</p>
 
-  <h3>江戸川型——人口が先に動く</h3>
-  <p>当下の価格は 23 区中ほぼ最低レンジだが、cohort 算法は 2015–2020 の実人口流入トレンドを 50 年後 +18.8% と外推する。<b>湾岸・篠崎・葛西駅周辺の再開発が真の居住人口を取り込んでいる</b>が、資本市場はまだ反応していない——価格はこれから動くかもしれない。</p>
+  <h3 data-i18n="cross.twomech.h3.edo">江戸川型——人口が先に動く</h3>
+  <p data-i18n="cross.twomech.p.edo" data-i18n-html>当下の価格は 23 区中ほぼ最低レンジだが、cohort 算法は 2015–2020 の実人口流入トレンドを 50 年後 +18.8% と外推する。<b>湾岸・篠崎・葛西駅周辺の再開発が真の居住人口を取り込んでいる</b>が、資本市場はまだ反応していない——価格はこれから動くかもしれない。</p>
 
-  <p class="moment">どちらか一つのデータ軸だけ見ると一方の outlier を見落とす。<b>東京東北・東部の下町は、二つの独立した機構によって同時に書き換えられつつある</b>——葛飾は資本入口、江戸川は人口入口。形態は同じく古いが、入ってくるものが違う。</p>
+  <p class="moment" data-i18n="cross.twomech.moment" data-i18n-html>どちらか一つのデータ軸だけ見ると一方の outlier を見落とす。<b>東京東北・東部の下町は、二つの独立した機構によって同時に書き換えられつつある</b>——葛飾は資本入口、江戸川は人口入口。形態は同じく古いが、入ってくるものが違う。</p>
 
-  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 16px;">※ ATLAS cohort projection は 2015→2020 の survival ratio を線形外推する単純モデル。湾岸再開発の具体的な人口効果は時点ごとに変動するため、50 年予測には大きな不確実性を伴う。</p>
+  <p class="moment" style="font-size: 10px; color: #555; border-left: none; padding-left: 0; margin-top: 16px;" data-i18n="cross.twomech.foot">※ ATLAS cohort projection は 2015→2020 の survival ratio を線形外推する単純モデル。湾岸再開発の具体的な人口効果は時点ごとに変動するため、50 年予測には大きな不確実性を伴う。</p>
 </section>
 
 <section id="cohort">
-  <div class="super">50 年 後 の 地 層</div>
-  <h2>東 京 は<br>消 滅 し な い<br>—— 加 速 す る だ け</h2>
+  <div class="super" data-i18n="cross.cohort.super">50 年 後 の 地 層</div>
+  <h2 data-i18n="cross.cohort.h2" data-i18n-html>東 京 は<br>消 滅 し な い<br>—— 加 速 す る だ け</h2>
 
-  <p class="lead">秋田県の集落消滅予測アルゴリズム（ATLAS Project）を東京 23 区に適用すると、別の事実が浮かぶ——東京 22 区はすべて 50 年後に人口が増える。日本全国の縮小トレンドと真逆。</p>
+  <p class="lead" data-i18n="cross.cohort.lead">秋田県の集落消滅予測アルゴリズム（ATLAS Project）を東京 23 区に適用すると、別の事実が浮かぶ——東京 22 区はすべて 50 年後に人口が増える。日本全国の縮小トレンドと真逆。</p>
 
-  <p>2015 → 2020 の cohort survival ratio から推計したところ、千代田は +24.5%、文京 +21.6%、中央 +18.5%——都心は加速。最も停滞する台東でも +2.0% で「消滅」のスケールには遠い。</p>
+  <p data-i18n="cross.cohort.p1">2015 → 2020 の cohort survival ratio から推計したところ、千代田は +24.5%、文京 +21.6%、中央 +18.5%——都心は加速。最も停滞する台東でも +2.0% で「消滅」のスケールには遠い。</p>
 
-  <p>言い換えれば、ATLAS の「集落消滅」概念は東京には適用されない。代わりに「加速増の都心 vs 緩慢成熟の下町」という別の二極が現れる。</p>
+  <p data-i18n="cross.cohort.p2">言い換えれば、ATLAS の「集落消滅」概念は東京には適用されない。代わりに「加速増の都心 vs 緩慢成熟の下町」という別の二極が現れる。</p>
 
   <div class="chart" id="chart-cohort"></div>
-  <p class="chart-caption">横軸：朽葉率 (古層率) ／ 縦軸：50 年後の人口変化率（cohort projection 2020 → 2070）。 朽葉率が低い区ほど人口加速、高い区ほど緩慢——形態が未来の人口軌跡と相関する。</p>
+  <p class="chart-caption" data-i18n="cross.cohort.caption">横軸：朽葉率 (古層率) ／ 縦軸：50 年後の人口変化率（cohort projection 2020 → 2070）。 朽葉率が低い区ほど人口加速、高い区ほど緩慢——形態が未来の人口軌跡と相関する。</p>
 
-  <h3>3 つの未来軌跡</h3>
+  <h3 data-i18n="cross.cohort.h3.tracks">3 つの未来軌跡</h3>
 
   <div class="cat-block cat-mature">
-    <h3>若返り都心（人口 +17〜25%）</h3>
+    <h3 data-i18n="cross.cohort.rejuv.h3">若返り都心（人口 +17〜25%）</h3>
     <div class="wards" id="cohort-rejuvenating">—</div>
-    <p>千代田・中央・文京・港・江戸川。都心 + 都心隣接 + 大規模再開発が進む湾岸下流。50 年後人口がもっとも伸びる。</p>
+    <p data-i18n="cross.cohort.rejuv.p">千代田・中央・文京・港・江戸川。都心 + 都心隣接 + 大規模再開発が進む湾岸下流。50 年後人口がもっとも伸びる。</p>
   </div>
 
   <div class="cat-block cat-rising">
-    <h3>安定郊外（人口 +10〜17%）</h3>
+    <h3 data-i18n="cross.cohort.stable.h3">安定郊外（人口 +10〜17%）</h3>
     <div class="wards" id="cohort-stable">—</div>
-    <p>練馬・世田谷・杉並・中野・大田・品川・目黒・江東・板橋・豊島・新宿・渋谷・荒川。郊外住宅地と中間層の区。穏やかに増える「中庸の地層」。</p>
+    <p data-i18n="cross.cohort.stable.p">練馬・世田谷・杉並・中野・大田・品川・目黒・江東・板橋・豊島・新宿・渋谷・荒川。郊外住宅地と中間層の区。穏やかに増える「中庸の地層」。</p>
   </div>
 
   <div class="cat-block cat-forgotten">
-    <h3>緩慢成熟（人口 +2〜10%）</h3>
+    <h3 data-i18n="cross.cohort.slow.h3">緩慢成熟（人口 +2〜10%）</h3>
     <div class="wards" id="cohort-slowing">—</div>
-    <p>足立・葛飾・北・墨田・台東。下町中心の北部・東部。人口は微増だが速度は最も緩い。形態の朽葉率も高く「形態と未来軌跡が両方とも保守的」な層。</p>
+    <p data-i18n="cross.cohort.slow.p">足立・葛飾・北・墨田・台東。下町中心の北部・東部。人口は微増だが速度は最も緩い。形態の朽葉率も高く「形態と未来軌跡が両方とも保守的」な層。</p>
   </div>
 
-  <p class="moment">注：cohort projection は 2015→2020 の survival ratio + fertility が今後 50 年継続すると仮定する単純モデル。経済変動・出生率反転・移民政策・自然災害は未モデル化。</p>
+  <p class="moment" data-i18n="cross.cohort.moment">注：cohort projection は 2015→2020 の survival ratio + fertility が今後 50 年継続すると仮定する単純モデル。経済変動・出生率反転・移民政策・自然災害は未モデル化。</p>
 </section>
 
 <section id="redteam">
-  <div class="super">紅隊（自検）</div>
-  <h2>こ の 分 析 の 限 界</h2>
+  <div class="super" data-i18n="cross.redteam.super">紅隊（自検）</div>
+  <h2 data-i18n="cross.redteam.h2">こ の 分 析 の 限 界</h2>
   <div class="redteam">
-    <h3>5 つの caveat</h3>
+    <h3 data-i18n="cross.redteam.h3">5 つの caveat</h3>
     <ol>
-      <li><b>時間窓不一致</b>——Strata は PLATEAU 2023–24 の静的形態、UpgradeMap は最新の価格・人口動態。「形態が升值を予測する」と言うには時系列追跡が必要。今回は cross-section。</li>
-      <li><b>base effect</b>——朽葉率高い郊外大区は人口絶対数も多く、価格が低い base から％増加が高く見える。「老町升级」と読むより「低価帯の自然な成長」の可能性。</li>
-      <li><b>n=22 の統計力</b>——r=+0.86 は強相関だが、n=22 では信頼区間が広い。複数年データで再検証が必要。</li>
-      <li><b>「忘れられた」のラベル恣意性</b>——大田・江戸川は元々住宅密度高い「成熟した郊外」。「忘れられた」と読むのは余計な物語化。中立に「低 momentum 高古層」と呼ぶべき。</li>
-      <li><b>causation ≠ correlation</b>——r=+0.86 は「塔が人を呼ぶ」とも「人が塔を建てる」とも、「両者が共通の第三因子（駅近・再開発計画）の結果」とも読める。</li>
+      <li data-i18n="cross.redteam.li1" data-i18n-html><b>時間窓不一致</b>——Strata は PLATEAU 2023–24 の静的形態、UpgradeMap は最新の価格・人口動態。「形態が升值を予測する」と言うには時系列追跡が必要。今回は cross-section。</li>
+      <li data-i18n="cross.redteam.li2" data-i18n-html><b>base effect</b>——朽葉率高い郊外大区は人口絶対数も多く、価格が低い base から％増加が高く見える。「老町升级」と読むより「低価帯の自然な成長」の可能性。</li>
+      <li data-i18n="cross.redteam.li3" data-i18n-html><b>n=22 の統計力</b>——r=+0.86 は強相関だが、n=22 では信頼区間が広い。複数年データで再検証が必要。</li>
+      <li data-i18n="cross.redteam.li4" data-i18n-html><b>「忘れられた」のラベル恣意性</b>——大田・江戸川は元々住宅密度高い「成熟した郊外」。「忘れられた」と読むのは余計な物語化。中立に「低 momentum 高古層」と呼ぶべき。</li>
+      <li data-i18n="cross.redteam.li5" data-i18n-html><b>causation ≠ correlation</b>——r=+0.86 は「塔が人を呼ぶ」とも「人が塔を建てる」とも、「両者が共通の第三因子（駅近・再開発計画）の結果」とも読める。</li>
     </ol>
   </div>
 </section>
 
 <section id="colophon">
-  <div class="super">出典</div>
-  <h2>データ と 手 法</h2>
-  <p><b>Tokyo Strata</b>: PLATEAU 2023–24 CityGML, 22 区, 290 万棟（form classification by 耐火構造 × 高度）<br>
+  <div class="super" data-i18n="cross.colophon.super">出典</div>
+  <h2 data-i18n="cross.colophon.h2">データ と 手 法</h2>
+  <p data-i18n="cross.colophon.body" data-i18n-html><b>Tokyo Strata</b>: PLATEAU 2023–24 CityGML, 22 区, 290 万棟（form classification by 耐火構造 × 高度）<br>
   <b>UpgradeMap</b>: reinfolib 成交价 + e-Stat 人口統計, 23 区<br>
   <b>交差</b>: 22 区（台東は Strata 未収）<br>
   <b>手法</b>: Pearson 相関 + threshold 分類</p>
-  <p class="small">詳細: <a href="https://github.com/...">cross-report.md</a> · <a href="./data/cross.json">cross.json</a> · <a href="./tokyo-strata.pdf">PDF</a></p>
-  <p class="small"><a href="/">主編集 →</a> · <a href="/about">about</a> · <a href="/explore">explore</a> · <a href="https://upgrademap.vercel.app/" target="_blank">UpgradeMap →</a></p>
-  <p class="small" style="margin-top: 32px; letter-spacing: 4px;">Edited &amp; developed by　<b style="color: #d8d2c8; font-weight: 400;">Jada Q</b>　·　2026</p>
+  <p class="small" data-i18n="cross.colophon.small1" data-i18n-html>詳細: <a href="https://github.com/...">cross-report.md</a> · <a href="./data/cross.json">cross.json</a> · <a href="./tokyo-strata.pdf">PDF</a></p>
+  <p class="small" data-i18n="cross.colophon.small2" data-i18n-html><a href="/">主編集 →</a> · <a href="/about">about</a> · <a href="/explore">explore</a> · <a href="https://upgrademap.vercel.app/" target="_blank">UpgradeMap →</a></p>
+  <p class="small" style="margin-top: 32px; letter-spacing: 4px;"><span data-i18n="common.footer.credit">Edited &amp; developed by</span>　<b style="color: #d8d2c8; font-weight: 400;">Jada Q</b>　·　2026</p>
 </section>
 
+<script src="./i18n/strings.js"></script>
+<script src="./i18n/i18n.js"></script>
 <script>
 const STRATUM_COLORS = {
   mature:    '#e8ecef',
@@ -459,8 +537,10 @@ function renderCohortScatter(containerId, wards) {
     svg += `<line class="axis-line" x1="${M.l-5}" y1="${y}" x2="${M.l}" y2="${y}"/>`;
     svg += `<text class="axis-label" x="${M.l-10}" y="${y+4}" text-anchor="end">${v.toFixed(0)}</text>`;
   }
-  svg += `<text class="axis-label" x="${(W-M.l-M.r)/2 + M.l}" y="${H-12}" text-anchor="middle">朽葉% (古層率)</text>`;
-  svg += `<text class="axis-label" x="${20}" y="${(H-M.t-M.b)/2 + M.t}" text-anchor="middle" transform="rotate(-90 20 ${(H-M.t-M.b)/2 + M.t})">2070 人口変化 % (vs 2020)</text>`;
+  const xLabel = (window.I18N && I18N.get('cross.cohort.x')) || '朽葉% (古層率)';
+  const yLabel = (window.I18N && I18N.get('cross.cohort.y')) || '2070 人口変化 % (vs 2020)';
+  svg += `<text class="axis-label" x="${(W-M.l-M.r)/2 + M.l}" y="${H-12}" text-anchor="middle">${xLabel}</text>`;
+  svg += `<text class="axis-label" x="${20}" y="${(H-M.t-M.b)/2 + M.t}" text-anchor="middle" transform="rotate(-90 20 ${(H-M.t-M.b)/2 + M.t})">${yLabel}</text>`;
   for (const w of wards) {
     const x = sx(w.kuchiba), y = sy(w.pop_change_50y_pct);
     let c;
@@ -500,23 +580,35 @@ function renderCategories(wards) {
 
 (async function () {
   const data = await (await fetch('./data/cross.json?v=2')).json();
-  renderScatter('chart-main', data.wards, 'tsukishiro', 'pop_yoy', '月白% (高層 30m+)', '人口 YoY %');
+
+  function drawMainScatter() {
+    const xLabel = (window.I18N && I18N.get('cross.scatter.x')) || '月白% (高層 30m+)';
+    const yLabel = (window.I18N && I18N.get('cross.scatter.y')) || '人口 YoY %';
+    renderScatter('chart-main', data.wards, 'tsukishiro', 'pop_yoy', xLabel, yLabel);
+  }
+  drawMainScatter();
   renderCorrTable(data.correlations);
   renderCategories(data.wards);
 
   // Cohort projection (Tokyo Strata × ATLAS)
+  let wardsWithCohort = null;
   try {
     const cohort = await (await fetch('./data/cohort.json?v=2')).json();
-    const wardsWithCohort = data.wards.map(w => ({
+    wardsWithCohort = data.wards.map(w => ({
       ...w,
       pop_change_50y_pct: cohort[w.id] ? cohort[w.id].pop_change_50y_pct : null,
     })).filter(w => w.pop_change_50y_pct !== null);
-    // Custom scatter renderer for cohort (forgotten lowtowns get warm tone)
     renderCohortScatter('chart-cohort', wardsWithCohort);
     renderCohortCategories(cohort);
   } catch (e) {
     console.warn('cohort data not loaded:', e);
   }
+
+  // Re-render charts when language changes (axis labels in SVG are not data-i18n)
+  document.addEventListener('lang:changed', () => {
+    drawMainScatter();
+    if (wardsWithCohort) renderCohortScatter('chart-cohort', wardsWithCohort);
+  });
 
   // TOC active
   const tocLinks = document.querySelectorAll('#toc a');

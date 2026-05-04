@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-i18n-title="explore.title">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tokyo Strata · 東京 22 区 EXPLORE</title>
 
 <meta name="description" content="東京 22 区 290 万棟の建築物を耐火構造×高度の二軸で可視化した都市考古地図。自由探索モード。">
@@ -27,6 +28,9 @@
     color: #c8c4be;
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
     overflow: hidden;
+  }
+  html[lang="zh-CN"] body {
+    font-family: 'Songti SC', 'STSong', 'Source Han Serif SC', 'Noto Serif CJK SC', '宋体', SimSun, 'Hiragino Mincho ProN', serif;
   }
   #map { width: 100vw; height: 100vh; background: #0a0a0a; }
   .maplibregl-canvas { background: #0a0a0a; }
@@ -73,19 +77,88 @@
   }
   #count b { color: #888; }
   .maplibregl-ctrl-attrib { display: none !important; }
+
+  /* Language switcher — kebab menu */
+  #lang-switch {
+    position: absolute; top: 26px; right: 32px; z-index: 6;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  }
+  #lang-toggle {
+    background: transparent; border: none; padding: 4px 8px;
+    color: #6b6660; cursor: pointer;
+    font: inherit; font-size: 20px; line-height: 1;
+  }
+  #lang-toggle:hover, #lang-toggle[aria-expanded="true"] { color: #e8e4dc; }
+  #lang-menu {
+    position: absolute; top: 100%; right: 0;
+    margin-top: 6px;
+    background: #15110f;
+    border: 1px solid #2a2622;
+    display: flex; flex-direction: column;
+    padding: 4px 0;
+    min-width: 96px;
+  }
+  #lang-menu[hidden] { display: none; }
+  #lang-menu button {
+    background: transparent; border: none;
+    padding: 7px 16px; cursor: pointer;
+    color: #6b6660;
+    font-family: inherit;
+    font-size: 11px; letter-spacing: 3px;
+    text-align: left; line-height: 1.5;
+    width: 100%;
+  }
+  #lang-menu button:hover { color: #d8d2c8; background: rgba(255,255,255,0.04); }
+  #lang-menu button.active { color: #e8e4dc; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    #title { top: 18px; left: 20px; font-size: 9px; letter-spacing: 4px; }
+    #title b { font-size: 20px; letter-spacing: 6px; margin-top: 4px; }
+    #subtitle {
+      top: 70px; left: 20px; right: 20px;
+      max-width: none;
+      font-size: 10px; letter-spacing: 0.5px; line-height: 1.65;
+    }
+    #legend {
+      bottom: 24px; left: 20px;
+      font-size: 10px; letter-spacing: 1px; line-height: 1.7;
+    }
+    .swatch { width: 12px; height: 12px; margin-right: 10px; }
+    .cname { width: 50px; letter-spacing: 2px; }
+    #count {
+      bottom: 24px; right: 20px;
+      font-size: 9px; letter-spacing: 1px;
+    }
+    #lang-switch { top: 14px; right: 14px; }
+    #lang-toggle { font-size: 18px; padding: 4px 6px; }
+    #lang-menu { min-width: 88px; }
+    #lang-menu button { padding: 8px 14px; font-size: 11px; letter-spacing: 2px; }
+    .maplibregl-ctrl-top-right { top: 60px !important; }
+  }
 </style>
 </head>
 <body>
-<div id="title">TOKYO STRATA<b>東京 22 区 形態地層</b></div>
-<div id="subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
+<nav id="lang-switch">
+  <button id="lang-toggle" aria-label="Language" aria-expanded="false" aria-controls="lang-menu">⋮</button>
+  <div id="lang-menu" hidden>
+    <button data-lang-btn="ja">JP</button>
+    <button data-lang-btn="zh">CN</button>
+    <button data-lang-btn="en">EN</button>
+  </div>
+</nav>
+<div id="title"><span data-i18n="explore.title.label">TOKYO STRATA</span><b data-i18n="explore.title.b">東京 22 区 形態地層</b></div>
+<div id="subtitle" data-i18n="explore.subtitle">耐火構造と高度の組み合わせから、東京の地層を読み解く。朽葉が古層、月白が現代層。</div>
 <div id="legend">
-  <div><span class="swatch" style="background:#6e4c30"></span><span class="cname">朽葉</span><span class="cdesc">古き木造の街</span></div>
-  <div><span class="swatch" style="background:#b19a55"></span><span class="cname">利休茶</span><span class="cdesc">戦後の小楼</span></div>
-  <div><span class="swatch" style="background:#9d9c9d"></span><span class="cname">銀鼠</span><span class="cdesc">高度成長の中層</span></div>
-  <div><span class="swatch" style="background:#e8ecef"></span><span class="cname">月白</span><span class="cdesc">現代の塔</span></div>
+  <div><span class="swatch" style="background:#6e4c30"></span><span class="cname" data-i18n="common.palette.kuchiba.name">朽葉</span><span class="cdesc" data-i18n="common.palette.kuchiba.desc">古き木造の街</span></div>
+  <div><span class="swatch" style="background:#b19a55"></span><span class="cname" data-i18n="common.palette.rikyu.name">利休茶</span><span class="cdesc" data-i18n="common.palette.rikyu.desc">戦後の小楼</span></div>
+  <div><span class="swatch" style="background:#9d9c9d"></span><span class="cname" data-i18n="common.palette.ginnezu.name">銀鼠</span><span class="cdesc" data-i18n="common.palette.ginnezu.desc">高度成長の中層</span></div>
+  <div><span class="swatch" style="background:#e8ecef"></span><span class="cname" data-i18n="common.palette.tsukishiro.name">月白</span><span class="cdesc" data-i18n="common.palette.tsukishiro.desc">現代の塔</span></div>
 </div>
-<div id="count"></div>
+<div id="count" data-i18n="explore.count.html" data-i18n-html></div>
 <div id="map"></div>
+<script src="./i18n/strings.js"></script>
+<script src="./i18n/i18n.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
 <script>
@@ -123,9 +196,7 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
 map.on('load', async () => {
-  document.getElementById('count').innerHTML =
-    '<b>290 万棟</b><br>PLATEAU 東京 22 区 2023–24<br><span style="font-size:9px;letter-spacing:3px;color:#666;">by Jada Q · 2026</span>';
-
+  // count is now hydrated by i18n via data-i18n on #count
   map.addSource('bldg', { type: 'vector', url: 'pmtiles://./data/tokyo.pmtiles' });
 
   map.addLayer({

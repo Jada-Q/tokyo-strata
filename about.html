@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-i18n-title="about.title">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,6 +29,9 @@
     font-feature-settings: "palt" 1;
     line-height: 2;
     min-height: 100vh;
+  }
+  html[lang="zh-CN"] body {
+    font-family: 'Songti SC', 'STSong', 'Source Han Serif SC', 'Noto Serif CJK SC', '宋体', SimSun, 'Hiragino Mincho ProN', serif;
   }
 
   main {
@@ -110,6 +113,62 @@
   }
   nav.crumb a:hover { color: #d8d2c8; }
 
+  /* Language switcher — kebab menu */
+  #lang-switch {
+    position: fixed; top: 18px; right: 22px; z-index: 60;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  }
+  #lang-toggle {
+    background: transparent; border: none; padding: 4px 8px;
+    color: #6b6660; cursor: pointer;
+    font: inherit; font-size: 20px; line-height: 1;
+  }
+  #lang-toggle:hover, #lang-toggle[aria-expanded="true"] { color: #e8e4dc; }
+  #lang-menu {
+    position: absolute; top: 100%; right: 0;
+    margin-top: 6px;
+    background: #15110f;
+    border: 1px solid #2a2622;
+    display: flex; flex-direction: column;
+    padding: 4px 0;
+    min-width: 96px;
+  }
+  #lang-menu[hidden] { display: none; }
+  #lang-menu button {
+    background: transparent; border: none;
+    padding: 7px 16px; cursor: pointer;
+    color: #6b6660;
+    font-family: inherit;
+    font-size: 11px; letter-spacing: 3px;
+    text-align: left; line-height: 1.5;
+    width: 100%;
+  }
+  #lang-menu button:hover { color: #d8d2c8; background: rgba(255,255,255,0.04); }
+  #lang-menu button.active { color: #e8e4dc; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    main { padding: 80px 20px 80px; max-width: none; }
+    .super { font-size: 9px; letter-spacing: 5px; }
+    h1 { font-size: 26px; letter-spacing: 7px; margin-bottom: 40px; }
+    h2 { font-size: 12px; letter-spacing: 4px; margin-top: 48px; margin-bottom: 18px; }
+    p { font-size: 13px; letter-spacing: 1px; line-height: 2; margin-bottom: 18px; }
+    p.lead { font-size: 14px; }
+    .palette {
+      grid-template-columns: 12px 60px 1fr; gap: 6px 12px;
+      font-size: 11px;
+    }
+    .palette .sw { width: 12px; height: 12px; }
+    table { font-size: 11px; }
+    th, td { padding: 8px 6px; }
+    .meta-block { font-size: 10px; line-height: 1.85; }
+    nav.crumb { top: 14px; left: 14px; font-size: 9px; letter-spacing: 3px; }
+    #lang-switch { top: 10px; right: 10px; }
+    #lang-toggle { font-size: 18px; padding: 4px 6px; }
+    #lang-menu { min-width: 88px; }
+    #lang-menu button { padding: 8px 14px; font-size: 11px; letter-spacing: 2px; }
+  }
+
   /* Print */
   @page { size: A4 portrait; margin: 24mm 22mm; }
   @media print {
@@ -118,67 +177,73 @@
     .super, h1, h2, p, .meta-block { color: #222 !important; }
     h2 { border-bottom-color: #999 !important; }
     table th, table td { border-bottom-color: #ccc !important; }
-    nav.crumb { display: none; }
+    nav.crumb, #lang-switch { display: none; }
     a { color: #555 !important; border-bottom-color: #999 !important; }
   }
 </style>
 </head>
 <body>
 
-<nav class="crumb"><a href="/">← TOKYO STRATA</a></nav>
+<nav id="lang-switch">
+  <button id="lang-toggle" aria-label="Language" aria-expanded="false" aria-controls="lang-menu">⋮</button>
+  <div id="lang-menu" hidden>
+    <button data-lang-btn="ja">JP</button>
+    <button data-lang-btn="zh">CN</button>
+    <button data-lang-btn="en">EN</button>
+  </div>
+</nav>
+
+<nav class="crumb"><a href="/" data-i18n="common.crumb.home">← TOKYO STRATA</a></nav>
 
 <main>
-  <div class="super">ABOUT</div>
-  <h1>形 態 地 層 と は</h1>
+  <div class="super" data-i18n="about.super">ABOUT</div>
+  <h1 data-i18n="about.h1">形 態 地 層 と は</h1>
 
-  <p class="lead">Tokyo Strata は、東京 22 区・290 万棟の建築物を「耐火構造 × 高度」の二軸で読み解いた都市考古地図です。</p>
+  <p class="lead" data-i18n="about.lead">Tokyo Strata は、東京 22 区・290 万棟の建築物を「耐火構造 × 高度」の二軸で読み解いた都市考古地図です。</p>
 
-  <p>Project PLATEAU 2023–24 の 3D 都市モデルから footprint・用途・構造・高度を抽出し、4 色の形態地層として描きました——朽葉が古層、月白が現代層。建築年は記録されていませんが、形態が時代の代理として浮かび上がります。</p>
+  <p data-i18n="about.p1">Project PLATEAU 2023–24 の 3D 都市モデルから footprint・用途・構造・高度を抽出し、4 色の形態地層として描きました——朽葉が古層、月白が現代層。建築年は記録されていませんが、形態が時代の代理として浮かび上がります。</p>
 
-  <p>皇居を中心に、北は荒川・足立の下町、南は大田の海岸、西は世田谷・練馬の郊外住宅地まで——一枚の地図に重なる東京の時間を読む試みです。</p>
+  <p data-i18n="about.p2">皇居を中心に、北は荒川・足立の下町、南は大田の海岸、西は世田谷・練馬の郊外住宅地まで——一枚の地図に重なる東京の時間を読む試みです。</p>
 
-  <h2>4 色 の 凡 例</h2>
+  <h2 data-i18n="about.h2.legend">4 色 の 凡 例</h2>
   <div class="palette">
-    <span class="sw" style="background:#6e4c30"></span><span class="nm">朽葉</span><span class="dc">「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造の街。</span>
-    <span class="sw" style="background:#b19a55"></span><span class="nm">利休茶</span><span class="dc">耐火・準耐火の同低層——戦後の小楼に対応する。</span>
-    <span class="sw" style="background:#9d9c9d"></span><span class="nm">銀鼠</span><span class="dc">中層 10–30m、高度成長期以降の中規模ビル。</span>
-    <span class="sw" style="background:#e8ecef"></span><span class="nm">月白</span><span class="dc">高層 30m 以上、バブル期以降の塔状建築。</span>
+    <span class="sw" style="background:#6e4c30"></span><span class="nm" data-i18n="common.palette.kuchiba.name">朽葉</span><span class="dc" data-i18n="about.palette.kuchiba.desc">「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造の街。</span>
+    <span class="sw" style="background:#b19a55"></span><span class="nm" data-i18n="common.palette.rikyu.name">利休茶</span><span class="dc" data-i18n="about.palette.rikyu.desc">耐火・準耐火の同低層——戦後の小楼に対応する。</span>
+    <span class="sw" style="background:#9d9c9d"></span><span class="nm" data-i18n="common.palette.ginnezu.name">銀鼠</span><span class="dc" data-i18n="about.palette.ginnezu.desc">中層 10–30m、高度成長期以降の中規模ビル。</span>
+    <span class="sw" style="background:#e8ecef"></span><span class="nm" data-i18n="common.palette.tsukishiro.name">月白</span><span class="dc" data-i18n="about.palette.tsukishiro.desc">高層 30m 以上、バブル期以降の塔状建築。</span>
   </div>
 
-  <h2>形態 を 時代 の 代理 と す る 理由</h2>
-  <p>本来であれば建築年を直接プロットするのが理想ですが、PLATEAU の公開データには yearOfConstruction の値が記載されていません（schema 上は存在するものの、東京 22 区いずれも非公開）。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる——耐火構造の有無と高度を組み合わせると、おおよその建築世代が推測できるからです。</p>
-  <p>木造低層は戦前〜戦後早期、耐火低層は戦後復興、中層 RC は高度成長、超高層はバブル期以降。決して厳密な分類ではありませんが、街全体を一枚の地図として眺めると、時代の地層がはっきりと現れます。</p>
+  <h2 data-i18n="about.h2.proxy">形態 を 時代 の 代理 と す る 理由</h2>
+  <p data-i18n="about.proxy.p1">本来であれば建築年を直接プロットするのが理想ですが、PLATEAU の公開データには yearOfConstruction の値が記載されていません（schema 上は存在するものの、東京 22 区いずれも非公開）。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる——耐火構造の有無と高度を組み合わせると、おおよその建築世代が推測できるからです。</p>
+  <p data-i18n="about.proxy.p2">木造低層は戦前〜戦後早期、耐火低層は戦後復興、中層 RC は高度成長、超高層はバブル期以降。決して厳密な分類ではありませんが、街全体を一枚の地図として眺めると、時代の地層がはっきりと現れます。</p>
 
-  <h2>区 ご と の 強 い 偏 り</h2>
+  <h2 data-i18n="about.h2.bias">区 ご と の 強 い 偏 り</h2>
   <table>
     <thead>
-      <tr><th>区</th><th class="num">朽葉%</th><th class="num">月白%</th><th class="num">平均高</th></tr>
+      <tr><th data-i18n="about.bias.th.ward">区</th><th class="num" data-i18n="about.bias.th.kuchiba">朽葉%</th><th class="num" data-i18n="about.bias.th.tsukishiro">月白%</th><th class="num" data-i18n="about.bias.th.avgh">平均高</th></tr>
     </thead>
     <tbody>
-      <tr><td>練馬</td><td class="num">73.9</td><td class="num">0.3</td><td class="num">8.0 m</td></tr>
-      <tr><td>杉並</td><td class="num">71.6</td><td class="num">0.3</td><td class="num">8.1 m</td></tr>
-      <tr><td>世田谷</td><td class="num">65.8</td><td class="num">0.3</td><td class="num">8.2 m</td></tr>
-      <tr><td>渋谷</td><td class="num">42.3</td><td class="num">4.0</td><td class="num">11.6 m</td></tr>
-      <tr><td>新宿</td><td class="num">37.9</td><td class="num">4.3</td><td class="num">12.0 m</td></tr>
-      <tr><td>港</td><td class="num">28.0</td><td class="num">11.4</td><td class="num">16.1 m</td></tr>
-      <tr><td>中央</td><td class="num">26.6</td><td class="num">16.7</td><td class="num">18.3 m</td></tr>
-      <tr><td>千代田</td><td class="num">21.2</td><td class="num">18.5</td><td class="num">19.4 m</td></tr>
+      <tr><td data-i18n="about.bias.row.nerima">練馬</td><td class="num">73.9</td><td class="num">0.3</td><td class="num">8.0 m</td></tr>
+      <tr><td data-i18n="about.bias.row.suginami">杉並</td><td class="num">71.6</td><td class="num">0.3</td><td class="num">8.1 m</td></tr>
+      <tr><td data-i18n="about.bias.row.setagaya">世田谷</td><td class="num">65.8</td><td class="num">0.3</td><td class="num">8.2 m</td></tr>
+      <tr><td data-i18n="about.bias.row.shibuya">渋谷</td><td class="num">42.3</td><td class="num">4.0</td><td class="num">11.6 m</td></tr>
+      <tr><td data-i18n="about.bias.row.shinjuku">新宿</td><td class="num">37.9</td><td class="num">4.3</td><td class="num">12.0 m</td></tr>
+      <tr><td data-i18n="about.bias.row.minato">港</td><td class="num">28.0</td><td class="num">11.4</td><td class="num">16.1 m</td></tr>
+      <tr><td data-i18n="about.bias.row.chuo">中央</td><td class="num">26.6</td><td class="num">16.7</td><td class="num">18.3 m</td></tr>
+      <tr><td data-i18n="about.bias.row.chiyoda">千代田</td><td class="num">21.2</td><td class="num">18.5</td><td class="num">19.4 m</td></tr>
     </tbody>
   </table>
-  <p>都心 3 区（千代田・中央・港）は月白比率が最高で、朽葉が最低。郊外住宅区（練馬・杉並・世田谷）は逆の極にある。緩やかな勾配が皇居から外周に向かって広がり、東京の都市発展の年輪を可視化する。</p>
+  <p data-i18n="about.bias.caption">都心 3 区（千代田・中央・港）は月白比率が最高で、朽葉が最低。郊外住宅区（練馬・杉並・世田谷）は逆の極にある。緩やかな勾配が皇居から外周に向かって広がり、東京の都市発展の年輪を可視化する。</p>
 
-  <h2>記 録 さ れ た 最 高 点</h2>
-  <p><b>墨田区</b> 634m = <b>東京スカイツリー</b>。22 区中で最も高い構造物として、形態地図の北東に屹立する。<br>
+  <h2 data-i18n="about.h2.peaks">記 録 さ れ た 最 高 点</h2>
+  <p data-i18n="about.peaks.body" data-i18n-html><b>墨田区</b> 634m = <b>東京スカイツリー</b>。22 区中で最も高い構造物として、形態地図の北東に屹立する。<br>
   <b>港区</b> 332m = <b>麻布台ヒルズ森 JP タワー</b>（2023 年竣工）。地層の最新の頂点。</p>
-
-  <h2>中 文</h2>
-  <p>Tokyo Strata 是一张东京 22 区、290 万栋建筑物的城市考古地图，以「耐火结构 × 高度」为二轴。从 Project PLATEAU 2023–24 的 3D 都市模型中抽取每栋建筑的轮廓、用途、结构和高度，绘制成 4 色形态地层——朽叶为古层、月白为现代层。虽然建造年未公开，但形态作为时代的代理浮现出来。以皇居为中心，北至荒川 · 足立的下町、南至大田的海岸、西至世田谷 · 练马的郊外住宅地——一张地图，叠出东京千层的时间。</p>
 
   <hr>
 
-  <h2>制 作</h2>
+  <h2 data-i18n="about.h2.production">制 作</h2>
   <div class="meta-block">
-    <p><b>データ</b>　Project PLATEAU 2023–24 CityGML（v4 / 一部 v3）。19 区は 2023 年度、墨田・品川・杉並は 2024 年度を使用。台東区は PLATEAU 2023 年度データセットが未公開のため除外。<br>
+    <p data-i18n="about.production.body" data-i18n-html><b>データ</b>　Project PLATEAU 2023–24 CityGML（v4 / 一部 v3）。19 区は 2023 年度、墨田・品川・杉並は 2024 年度を使用。台東区は PLATEAU 2023 年度データセットが未公開のため除外。<br>
     <b>ライセンス</b>　国土交通省／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／CC BY 4.0<br>
     <b>配信</b>　290 万棟を PMTiles に圧縮（48 MB、HTTP 範囲リクエストで配信）<br>
     <b>基礎図</b>　MapLibre GL JS 4.7　·　PMTiles 4.3　·　明朝：Hiragino Mincho ProN<br>
@@ -187,10 +252,12 @@
   </div>
 
   <p style="margin-top: 56px; font-size: 11px; letter-spacing: 4px; color: #777; text-align: center;">
-    Edited &amp; developed by　<b style="color: #d8d2c8; font-weight: 400;">Jada Q</b>　·　2026
+    <span data-i18n="common.footer.credit">Edited &amp; developed by</span>　<b style="color: #d8d2c8; font-weight: 400;">Jada Q</b>　·　2026
   </p>
 
 </main>
 
+<script src="./i18n/strings.js"></script>
+<script src="./i18n/i18n.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-i18n-title="index.title">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,6 +32,10 @@
     color: #c8c4be;
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Times New Roman', serif;
     font-feature-settings: "palt" 1;
+  }
+  /* Chinese: switch to a CN serif so simplified-only chars don't fallback per-glyph and bounce */
+  html[lang="zh-CN"] body {
+    font-family: 'Songti SC', 'STSong', 'Source Han Serif SC', 'Noto Serif CJK SC', '宋体', SimSun, 'Hiragino Mincho ProN', serif;
   }
   .maplibregl-canvas { background: #0a0a0a; }
   .maplibregl-ctrl-attrib { display: none !important; }
@@ -149,24 +153,33 @@
   /* === PALACE LABEL on every map === */
   .palace-label {
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-    color: #6f6862; font-size: 12px; letter-spacing: 12px;
+    color: #a09890; font-size: 12px; letter-spacing: 12px;
     writing-mode: vertical-rl; text-orientation: upright;
-    pointer-events: none; opacity: 0.85;
-    text-shadow: 0 0 8px rgba(0,0,0,0.6);
+    pointer-events: none; opacity: 0.95;
+    text-shadow:
+      0 0 4px rgba(0,0,0,1),
+      0 0 8px rgba(0,0,0,0.9),
+      0 0 14px rgba(0,0,0,0.6);
   }
 
   /* === LANDMARK LABEL (parks / rivers / shrines / etc) === */
   .landmark-label {
     font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-    color: #5f5852; font-size: 10px; letter-spacing: 3px;
-    pointer-events: none; opacity: 0.78;
-    text-shadow: 0 0 6px rgba(0,0,0,0.75), 0 0 2px rgba(0,0,0,0.9);
+    color: #8a8278; font-size: 10px; letter-spacing: 3px;
+    pointer-events: none; opacity: 0.95;
+    /* Heavy dark halo so text reads against any building color */
+    text-shadow:
+      0 0 3px rgba(0,0,0,1),
+      0 0 6px rgba(0,0,0,0.95),
+      0 0 10px rgba(0,0,0,0.7),
+      1px 1px 0 rgba(0,0,0,0.9),
+      -1px -1px 0 rgba(0,0,0,0.9);
     white-space: nowrap;
   }
-  .landmark-label.river { color: #5d6770; letter-spacing: 4px; }
-  .landmark-label.shrine { color: #6e5856; }
-  .landmark-label.cemetery { color: #58524e; }
-  .landmark-label.airport, .landmark-label.other { color: #5f5852; }
+  .landmark-label.river { color: #7a8590; letter-spacing: 4px; }
+  .landmark-label.shrine { color: #9c7672; }
+  .landmark-label.cemetery { color: #7c7470; }
+  .landmark-label.airport, .landmark-label.other { color: #8a8278; }
 
   /* Section index in fixed right edge */
   #toc {
@@ -190,66 +203,187 @@
   #print-btn:hover { color: #e8e4dc; border-color: #e8e4dc; }
   #print-btn[disabled] { opacity: 0.4; cursor: wait; }
 
+  /* Language switcher — kebab menu */
+  #lang-switch {
+    position: fixed; top: 18px; right: 22px; z-index: 60;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  }
+  #lang-toggle {
+    background: transparent; border: none; padding: 4px 8px;
+    color: #6b6660; cursor: pointer;
+    font: inherit; font-size: 20px; line-height: 1;
+    letter-spacing: 0;
+  }
+  #lang-toggle:hover { color: #e8e4dc; }
+  #lang-toggle[aria-expanded="true"] { color: #e8e4dc; }
+  #lang-menu {
+    position: absolute; top: 100%; right: 0;
+    margin-top: 6px;
+    background: #15110f;
+    border: 1px solid #2a2622;
+    display: flex; flex-direction: column;
+    padding: 4px 0;
+    min-width: 96px;
+  }
+  #lang-menu[hidden] { display: none; }
+  #lang-menu button {
+    background: transparent; border: none;
+    padding: 7px 16px; cursor: pointer;
+    color: #6b6660;
+    font-family: inherit;
+    font-size: 11px; letter-spacing: 3px;
+    text-align: left; line-height: 1.5;
+    width: 100%;
+  }
+  #lang-menu button:hover { color: #d8d2c8; background: rgba(255,255,255,0.04); }
+  #lang-menu button.active { color: #e8e4dc; }
+
+  /* === MOBILE === */
+  @media (max-width: 768px) {
+    html { scroll-snap-type: none; }
+    section { height: auto; min-height: 100vh; scroll-snap-align: none; }
+
+    #cover { padding: 80px 28px 80px; }
+    #cover .super { font-size: 9px; letter-spacing: 6px; margin-bottom: 24px; }
+    #cover h1 {
+      font-size: 30px; letter-spacing: 8px; line-height: 1.5;
+      margin-left: 8px;
+    }
+    #cover .meta { margin-top: 40px; font-size: 10px; letter-spacing: 2px; }
+    #cover .scroll-hint { font-size: 9px; letter-spacing: 4px; bottom: 28px; }
+
+    #intro { display: flex; flex-direction: column; }
+    #intro .text { padding: 64px 24px 32px; }
+    #intro .super { font-size: 9px; letter-spacing: 4px; }
+    #intro h2 { font-size: 22px; letter-spacing: 6px; margin-bottom: 24px; }
+    #intro p { font-size: 12px; letter-spacing: 1px; line-height: 1.9; }
+    #intro .palette {
+      grid-template-columns: 12px 56px 1fr; gap: 6px 12px;
+      font-size: 10px;
+    }
+    #intro .palette .sw { width: 12px; height: 12px; }
+    #intro .map { height: 60vh; min-height: 320px; }
+
+    .ward { display: flex; flex-direction: column; }
+    .ward .text { padding: 56px 24px 28px; }
+    .ward .romaji { font-size: 9px; letter-spacing: 5px; }
+    .ward h2 { font-size: 28px; letter-spacing: 10px; }
+    .ward .index { font-size: 9px; letter-spacing: 3px; margin-bottom: 28px; }
+    .ward .narrative p { font-size: 12px; letter-spacing: 1px; line-height: 1.9; }
+    .ward .moment { font-size: 10px; letter-spacing: 1px; margin-top: 18px; }
+    .ward .map { height: 60vh; min-height: 320px; }
+
+    .data-card { font-size: 10px; letter-spacing: 1px; gap: 4px 16px; margin-top: 24px; padding-top: 18px; }
+
+    #colophon { padding: 80px 24px; }
+    #colophon .super { font-size: 9px; letter-spacing: 5px; }
+    #colophon h2 { font-size: 18px; letter-spacing: 6px; margin-bottom: 32px; }
+    #colophon p { font-size: 11px; letter-spacing: 1px; line-height: 1.9; }
+    #colophon .small { font-size: 9px; letter-spacing: 1px; }
+
+    /* Hide the right-edge TOC on mobile — too narrow */
+    #toc { display: none; }
+
+    /* Lang switch + print button compact */
+    #lang-switch { top: 10px; right: 10px; }
+    #lang-toggle { font-size: 18px; padding: 4px 6px; }
+    #lang-menu { min-width: 88px; }
+    #lang-menu button { padding: 8px 14px; font-size: 11px; letter-spacing: 2px; }
+    #print-btn { bottom: 14px; right: 14px; padding: 6px 12px; font-size: 9px; letter-spacing: 2px; }
+  }
+
   /* === PRINT === */
-  @page { size: A3 landscape; margin: 0; }
+  /* A3 landscape declared explicitly in mm — Chrome's vh in print is unreliable */
+  @page { size: 420mm 297mm; margin: 0; }
   @media print {
     html { scroll-snap-type: none !important; scroll-behavior: auto !important; }
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #0a0a0a !important; }
-    #toc, .scroll-hint, #print-btn { display: none !important; }
+    body {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      background: #0a0a0a !important;
+      margin: 0 !important; padding: 0 !important; width: 420mm !important;
+    }
+    #toc, .scroll-hint, #print-btn, #lang-switch { display: none !important; }
+    /* Lock each section to a full A3 landscape page */
     section {
-      height: 297mm !important;
       width: 420mm !important;
-      page-break-after: always;
-      page-break-inside: avoid;
-      break-after: page;
-      break-inside: avoid;
+      height: 297mm !important;
+      min-height: 297mm !important;
+      max-height: 297mm !important;
+      page-break-after: always !important;
+      page-break-inside: avoid !important;
+      break-after: page !important;
+      break-inside: avoid !important;
       overflow: hidden !important;
     }
-    section:last-child { page-break-after: auto; break-after: auto; }
+    section:last-child { page-break-after: auto !important; break-after: auto !important; }
     /* Slightly tighter type for print */
     #cover h1 { font-size: 64px; }
     .ward h2 { font-size: 48px; }
     .ward .text, #intro .text { padding: 60px 48px; }
+
+    /* Force web's 38/62 split using absolute mm; overrides mobile flex-column rule */
+    #intro, .ward {
+      display: grid !important;
+      grid-template-columns: 160mm 260mm !important;
+      flex-direction: row !important;
+      width: 420mm !important;
+      height: 297mm !important;
+    }
+    #intro .text, .ward .text { width: 160mm !important; height: 297mm !important; }
+    #intro .map, .ward .map {
+      width: 260mm !important;
+      height: 297mm !important;
+      min-height: 0 !important;
+    }
   }
 </style>
 </head>
 <body>
 
-<button id="print-btn" onclick="preparePrint()">PRINT · A3</button>
+<nav id="lang-switch">
+  <button id="lang-toggle" aria-label="Language" aria-expanded="false" aria-controls="lang-menu">⋮</button>
+  <div id="lang-menu" hidden>
+    <button data-lang-btn="ja">JP</button>
+    <button data-lang-btn="zh">CN</button>
+    <button data-lang-btn="en">EN</button>
+  </div>
+</nav>
+
+<button id="print-btn" onclick="preparePrint()" data-i18n="index.print.btn">PRINT · A3</button>
 
 <nav id="toc">
-  <a href="#cover">表紙</a>
-  <a href="#intro">序</a>
-  <a href="#arakawa">荒川</a>
-  <a href="#bunkyo">文京</a>
-  <a href="#shinjuku">新宿</a>
-  <a href="#chiyoda">千代田</a>
-  <a href="#shibuya">渋谷</a>
-  <a href="#chuo">中央</a>
-  <a href="#minato">港</a>
-  <a href="#colophon">出典</a>
-  <a href="./cross" target="_self">Cross</a>
-  <a href="./about" target="_self">About</a>
+  <a href="#cover" data-i18n="index.toc.cover">表紙</a>
+  <a href="#intro" data-i18n="index.toc.intro">序</a>
+  <a href="#arakawa" data-i18n="index.ward.arakawa.h2">荒川</a>
+  <a href="#bunkyo" data-i18n="index.ward.bunkyo.h2">文京</a>
+  <a href="#shinjuku" data-i18n="index.ward.shinjuku.h2">新宿</a>
+  <a href="#chiyoda" data-i18n="index.ward.chiyoda.h2">千代田</a>
+  <a href="#shibuya" data-i18n="index.ward.shibuya.h2">渋谷</a>
+  <a href="#chuo" data-i18n="index.ward.chuo.h2">中央</a>
+  <a href="#minato" data-i18n="index.ward.minato.h2">港</a>
+  <a href="#colophon" data-i18n="index.toc.colophon">出典</a>
+  <a href="./cross" target="_self" data-i18n="common.nav.cross">Cross</a>
+  <a href="./about" target="_self" data-i18n="common.nav.about">About</a>
 </nav>
 
 <section id="cover">
-  <div class="super">TOKYO STRATA · 2026</div>
-  <h1>東京 22 区<br>形 態 地 層</h1>
-  <div class="meta">耐火構造 × 高度<br>290 万棟の建物から読み解く<br>東京の都市考古学</div>
-  <div class="scroll-hint">SCROLL ↓</div>
+  <div class="super" data-i18n="index.cover.super">TOKYO STRATA · 2026</div>
+  <h1 data-i18n="index.cover.title" data-i18n-html>東京 22 区<br>形 態 地 層</h1>
+  <div class="meta" data-i18n="index.cover.meta" data-i18n-html>耐火構造 × 高度<br>290 万棟の建物から読み解く<br>東京の都市考古学</div>
+  <div class="scroll-hint" data-i18n="index.cover.scroll">SCROLL ↓</div>
 </section>
 
 <section id="intro">
   <div class="text">
-    <div class="super">序</div>
-    <h2>形態は時代の<br>代理指標である</h2>
-    <p>東京 22 区、290 万棟の建築物を耐火構造と高度の二軸で読み解いた地層図。建築年は記録されていないが、形態が時代の代理として浮かび上がる。</p>
-    <p>朽葉が古層、月白が現代層。皇居を中心に、北は足立・葛飾の下町、南は大田の海岸、西は世田谷・練馬の郊外住宅地まで——一枚の地図に重なる東京の時間を読む。以下は焦点 7 区の編集の選。</p>
+    <div class="super" data-i18n="index.intro.super">序</div>
+    <h2 data-i18n="index.intro.h2" data-i18n-html>形態は時代の<br>代理指標である</h2>
+    <p data-i18n="index.intro.p1">東京 22 区、290 万棟の建築物を耐火構造と高度の二軸で読み解いた地層図。建築年は記録されていないが、形態が時代の代理として浮かび上がる。</p>
+    <p data-i18n="index.intro.p2">朽葉が古層、月白が現代層。皇居を中心に、北は足立・葛飾の下町、南は大田の海岸、西は世田谷・練馬の郊外住宅地まで——一枚の地図に重なる東京の時間を読む。以下は焦点 7 区の編集の選。</p>
     <div class="palette">
-      <span class="sw" style="background:#6e4c30"></span><span class="nm">朽葉</span><span class="dc">古き木造の街</span>
-      <span class="sw" style="background:#b19a55"></span><span class="nm">利休茶</span><span class="dc">戦後の小楼</span>
-      <span class="sw" style="background:#9d9c9d"></span><span class="nm">銀鼠</span><span class="dc">高度成長の中層</span>
-      <span class="sw" style="background:#e8ecef"></span><span class="nm">月白</span><span class="dc">現代の塔</span>
+      <span class="sw" style="background:#6e4c30"></span><span class="nm" data-i18n="common.palette.kuchiba.name">朽葉</span><span class="dc" data-i18n="common.palette.kuchiba.desc">古き木造の街</span>
+      <span class="sw" style="background:#b19a55"></span><span class="nm" data-i18n="common.palette.rikyu.name">利休茶</span><span class="dc" data-i18n="common.palette.rikyu.desc">戦後の小楼</span>
+      <span class="sw" style="background:#9d9c9d"></span><span class="nm" data-i18n="common.palette.ginnezu.name">銀鼠</span><span class="dc" data-i18n="common.palette.ginnezu.desc">高度成長の中層</span>
+      <span class="sw" style="background:#e8ecef"></span><span class="nm" data-i18n="common.palette.tsukishiro.name">月白</span><span class="dc" data-i18n="common.palette.tsukishiro.desc">現代の塔</span>
     </div>
   </div>
   <div class="map" id="map-intro"></div>
@@ -258,13 +392,13 @@
 <section class="ward" id="arakawa" data-ward="arakawa">
   <div class="text">
     <div>
-      <div class="romaji">ARAKAWA</div>
-      <h2>荒 川</h2>
-      <div class="index">第 一 区 · 北端の下町</div>
+      <div class="romaji" data-i18n="index.ward.arakawa.romaji">ARAKAWA</div>
+      <h2 data-i18n="index.ward.arakawa.h2">荒 川</h2>
+      <div class="index" data-i18n="index.ward.arakawa.index">第 一 区 · 北端の下町</div>
     </div>
     <div class="narrative">
-      <p>下町の北端、隅田川と荒川に挟まれた老町。朽葉色が最も濃く、形態地図上では低層の古層が連続する地層として浮かぶ。戦前の長屋と銭湯がいまなお路地に残り、明治・大正の街並みの輪郭がこの区では消えていない。</p>
-      <p class="moment">7 区中、朽葉色 50.6% と最も高い古層率。最高高度 154m、平均 9.8m——下町スケールが保たれている。</p>
+      <p data-i18n="index.ward.arakawa.p1">下町の北端、隅田川と荒川に挟まれた老町。朽葉色が最も濃く、形態地図上では低層の古層が連続する地層として浮かぶ。戦前の長屋と銭湯がいまなお路地に残り、明治・大正の街並みの輪郭がこの区では消えていない。</p>
+      <p class="moment" data-i18n="index.ward.arakawa.moment">7 区中、朽葉色 50.6% と最も高い古層率。最高高度 154m、平均 9.8m——下町スケールが保たれている。</p>
     </div>
     <div class="data-card" data-ward-stats="arakawa"></div>
   </div>
@@ -274,13 +408,13 @@
 <section class="ward" id="bunkyo" data-ward="bunkyo">
   <div class="text">
     <div>
-      <div class="romaji">BUNKYŌ</div>
-      <h2>文 京</h2>
-      <div class="index">第 二 区 · 本郷台地の屋敷町</div>
+      <div class="romaji" data-i18n="index.ward.bunkyo.romaji">BUNKYŌ</div>
+      <h2 data-i18n="index.ward.bunkyo.h2">文 京</h2>
+      <div class="index" data-i18n="index.ward.bunkyo.index">第 二 区 · 本郷台地の屋敷町</div>
     </div>
     <div class="narrative">
-      <p>本郷台地の住宅地。旧帝大と図書館の街。形態は朽葉と利休茶が穏やかに混じる中層が支配的で、戦前から続く屋敷町の骨格が残る。新宿副都心のような塔は持たず、谷を挟んで低中層がゆるやかに重なる地層となる。</p>
-      <p class="moment">朽葉 39.8%、月白 5.0%——「中庸の地層」。後楽園・東大本郷の周囲に古層が均質に広がる。</p>
+      <p data-i18n="index.ward.bunkyo.p1">本郷台地の住宅地。旧帝大と図書館の街。形態は朽葉と利休茶が穏やかに混じる中層が支配的で、戦前から続く屋敷町の骨格が残る。新宿副都心のような塔は持たず、谷を挟んで低中層がゆるやかに重なる地層となる。</p>
+      <p class="moment" data-i18n="index.ward.bunkyo.moment">朽葉 39.8%、月白 5.0%——「中庸の地層」。後楽園・東大本郷の周囲に古層が均質に広がる。</p>
     </div>
     <div class="data-card" data-ward-stats="bunkyo"></div>
   </div>
@@ -290,13 +424,13 @@
 <section class="ward" id="shinjuku" data-ward="shinjuku">
   <div class="text">
     <div>
-      <div class="romaji">SHINJUKU</div>
-      <h2>新 宿</h2>
-      <div class="index">第 三 区 · 両極の区</div>
+      <div class="romaji" data-i18n="index.ward.shinjuku.romaji">SHINJUKU</div>
+      <h2 data-i18n="index.ward.shinjuku.h2">新 宿</h2>
+      <div class="index" data-i18n="index.ward.shinjuku.index">第 三 区 · 両極の区</div>
     </div>
     <div class="narrative">
-      <p>西新宿の超高層ビル群と、神楽坂・早稲田の路地裏が同居する両極の区。形態地図上では月白の塔が西側に集中し、東側に朽葉の小さな点が散らばる。一つの区の中に「現代の塔」と「戦前の坂道」が、徒歩 30 分の距離で共存する。</p>
-      <p class="moment">建物 10 万 6588 棟——7 区中最多。最高 243m（西新宿）と古層 37.9% が同居する稀有な構造。</p>
+      <p data-i18n="index.ward.shinjuku.p1">西新宿の超高層ビル群と、神楽坂・早稲田の路地裏が同居する両極の区。形態地図上では月白の塔が西側に集中し、東側に朽葉の小さな点が散らばる。一つの区の中に「現代の塔」と「戦前の坂道」が、徒歩 30 分の距離で共存する。</p>
+      <p class="moment" data-i18n="index.ward.shinjuku.moment">建物 10 万 6588 棟——7 区中最多。最高 243m（西新宿）と古層 37.9% が同居する稀有な構造。</p>
     </div>
     <div class="data-card" data-ward-stats="shinjuku"></div>
   </div>
@@ -306,13 +440,13 @@
 <section class="ward" id="chiyoda" data-ward="chiyoda">
   <div class="text">
     <div>
-      <div class="romaji">CHIYODA</div>
-      <h2>千 代 田</h2>
-      <div class="index">第 四 区 · 都心の核</div>
+      <div class="romaji" data-i18n="index.ward.chiyoda.romaji">CHIYODA</div>
+      <h2 data-i18n="index.ward.chiyoda.h2">千 代 田</h2>
+      <div class="index" data-i18n="index.ward.chiyoda.index">第 四 区 · 都心の核</div>
     </div>
     <div class="narrative">
-      <p>皇居を中心とする都心の核。月白と銀鼠の高層が皇居周辺に整然と並び、丸の内・大手町は形態地図の最も明るい一角となる。番町・神田の一部に朽葉の残片が見えるが、戦後の都市計画によって地層は均質化されている。</p>
-      <p class="moment">月白比率 18.5%——7 区中で最大。平均高度 19.4m と最高。皇居の void が地層に空白の核を作る。</p>
+      <p data-i18n="index.ward.chiyoda.p1">皇居を中心とする都心の核。月白と銀鼠の高層が皇居周辺に整然と並び、丸の内・大手町は形態地図の最も明るい一角となる。番町・神田の一部に朽葉の残片が見えるが、戦後の都市計画によって地層は均質化されている。</p>
+      <p class="moment" data-i18n="index.ward.chiyoda.moment">月白比率 18.5%——7 区中で最大。平均高度 19.4m と最高。皇居の void が地層に空白の核を作る。</p>
     </div>
     <div class="data-card" data-ward-stats="chiyoda"></div>
   </div>
@@ -322,13 +456,13 @@
 <section class="ward" id="shibuya" data-ward="shibuya">
   <div class="text">
     <div>
-      <div class="romaji">SHIBUYA</div>
-      <h2>渋 谷</h2>
-      <div class="index">第 五 区 · 若い商業区</div>
+      <div class="romaji" data-i18n="index.ward.shibuya.romaji">SHIBUYA</div>
+      <h2 data-i18n="index.ward.shibuya.h2">渋 谷</h2>
+      <div class="index" data-i18n="index.ward.shibuya.index">第 五 区 · 若い商業区</div>
     </div>
     <div class="narrative">
-      <p>青山・原宿・恵比寿を含む若い商業区。形態地図では銀鼠の中層が主体、月白の塔が点在する。明治神宮の森が大きな黒の void として浮かび、その輪郭がこの区の geographic identity を作っている。</p>
-      <p class="moment">朽葉 42.3%、月白 4.0%——古層は残るが塔は控えめ。神宮の森の輪郭が南北に走る。</p>
+      <p data-i18n="index.ward.shibuya.p1">青山・原宿・恵比寿を含む若い商業区。形態地図では銀鼠の中層が主体、月白の塔が点在する。明治神宮の森が大きな黒の void として浮かび、その輪郭がこの区の geographic identity を作っている。</p>
+      <p class="moment" data-i18n="index.ward.shibuya.moment">朽葉 42.3%、月白 4.0%——古層は残るが塔は控えめ。神宮の森の輪郭が南北に走る。</p>
     </div>
     <div class="data-card" data-ward-stats="shibuya"></div>
   </div>
@@ -338,13 +472,13 @@
 <section class="ward" id="chuo" data-ward="chuo">
   <div class="text">
     <div>
-      <div class="romaji">CHŪŌ</div>
-      <h2>中 央</h2>
-      <div class="index">第 六 区 · 江戸の中央</div>
+      <div class="romaji" data-i18n="index.ward.chuo.romaji">CHŪŌ</div>
+      <h2 data-i18n="index.ward.chuo.h2">中 央</h2>
+      <div class="index" data-i18n="index.ward.chuo.index">第 六 区 · 江戸の中央</div>
     </div>
     <div class="narrative">
-      <p>銀座・日本橋・築地・月島。江戸の中央。下町と高層が複雑に層を成す。月島・佃島には朽葉の長屋がいまも残り、隣接する豊洲・晴海は月白の超高層タワーが新たな地層を築きつつある。古層と最新層が一区内で対比される。</p>
-      <p class="moment">月白 16.7%——千代田に次ぐ高さ。古層 26.6% と銀鼠 45.0% が「江戸の骨格」を支える。</p>
+      <p data-i18n="index.ward.chuo.p1">銀座・日本橋・築地・月島。江戸の中央。下町と高層が複雑に層を成す。月島・佃島には朽葉の長屋がいまも残り、隣接する豊洲・晴海は月白の超高層タワーが新たな地層を築きつつある。古層と最新層が一区内で対比される。</p>
+      <p class="moment" data-i18n="index.ward.chuo.moment">月白 16.7%——千代田に次ぐ高さ。古層 26.6% と銀鼠 45.0% が「江戸の骨格」を支える。</p>
     </div>
     <div class="data-card" data-ward-stats="chuo"></div>
   </div>
@@ -354,13 +488,13 @@
 <section class="ward" id="minato" data-ward="minato">
   <div class="text">
     <div>
-      <div class="romaji">MINATO</div>
-      <h2>港</h2>
-      <div class="index">第 七 区 · 山手と海岸</div>
+      <div class="romaji" data-i18n="index.ward.minato.romaji">MINATO</div>
+      <h2 data-i18n="index.ward.minato.h2">港</h2>
+      <div class="index" data-i18n="index.ward.minato.index">第 七 区 · 山手と海岸</div>
     </div>
     <div class="narrative">
-      <p>赤坂・六本木・品川・台場。山手と海岸の両方を含む。西側の山手は月白と銀鼠の高層、東側の海岸エリアは月白の超高層タワー群。形態地図の南端には、お台場・湾岸の人工島が独立した地層として広がる。</p>
-      <p class="moment">最高高度 332m——麻布台ヒルズ森 JP タワー、7 区中で最高。地層の最新の頂点。</p>
+      <p data-i18n="index.ward.minato.p1">赤坂・六本木・品川・台場。山手と海岸の両方を含む。西側の山手は月白と銀鼠の高層、東側の海岸エリアは月白の超高層タワー群。形態地図の南端には、お台場・湾岸の人工島が独立した地層として広がる。</p>
+      <p class="moment" data-i18n="index.ward.minato.moment">最高高度 332m——麻布台ヒルズ森 JP タワー、7 区中で最高。地層の最新の頂点。</p>
     </div>
     <div class="data-card" data-ward-stats="minato"></div>
   </div>
@@ -368,16 +502,18 @@
 </section>
 
 <section id="colophon">
-  <div class="super">出 典 と 凡 例</div>
-  <h2>形 態 地 層 と は</h2>
-  <p>色は耐火構造と高度の組み合わせから割り当てた、形態の世代を表す。朽葉は「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造。利休茶は耐火・準耐火の同低層——戦後の小楼。銀鼠は中層 10–30m、高度成長期以降の中規模ビル。月白は高層 30m 以上、バブル期以降の塔状建築。</p>
-  <p>建築年は PLATEAU には掲載されていないため、形態を時代の代理指標とした。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる。</p>
-  <p class="small">データ：Project PLATEAU 東京 22 区（千代田・中央・港・新宿・文京・墨田・江東・品川・目黒・大田・世田谷・渋谷・中野・杉並・豊島・北・荒川・板橋・練馬・足立・葛飾・江戸川）2023–2024 年度 CityGML（v4 / 一部 v3）／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／国土交通省／CC BY 4.0</p>
-  <p class="small">配信：290 万棟 を PMTiles に圧縮（48 MB）。基礎図：MapLibre GL JS 4.7　·　明朝：Hiragino Mincho ProN　·　台東区は 2023 年度データセットが未公開のため除外。</p>
-  <p class="small">プロジェクト概要は <a href="./about">about</a>。自由探索モードは <a href="./explore">explore</a>。データ交差分析（× UpgradeMap）は <a href="./cross">cross</a>。A3 横の印刷版 PDF：<a href="./tokyo-strata.pdf" download>tokyo-strata.pdf</a>（10 ページ・6.9 MB）</p>
-  <p class="small" style="margin-top: 32px; letter-spacing: 4px;">Edited &amp; developed by　<b style="color: #b0aca4; font-weight: 400;">Jada Q</b>　·　2026</p>
+  <div class="super" data-i18n="index.colophon.super">出 典 と 凡 例</div>
+  <h2 data-i18n="index.colophon.h2">形 態 地 層 と は</h2>
+  <p data-i18n="index.colophon.p1">色は耐火構造と高度の組み合わせから割り当てた、形態の世代を表す。朽葉は「その他・不明」分類かつ低層 10m 未満——多くは戦前から残る木造または準木造。利休茶は耐火・準耐火の同低層——戦後の小楼。銀鼠は中層 10–30m、高度成長期以降の中規模ビル。月白は高層 30m 以上、バブル期以降の塔状建築。</p>
+  <p data-i18n="index.colophon.p2">建築年は PLATEAU には掲載されていないため、形態を時代の代理指標とした。一棟一棟の正確な建築年は分からないが、地層としての時代の重なりは見えてくる。</p>
+  <p class="small" data-i18n="index.colophon.small1" data-i18n-html>データ：Project PLATEAU 東京 22 区（千代田・中央・港・新宿・文京・墨田・江東・品川・目黒・大田・世田谷・渋谷・中野・杉並・豊島・北・荒川・板橋・練馬・足立・葛飾・江戸川）2023–2024 年度 CityGML（v4 / 一部 v3）／<a href="https://www.geospatial.jp/ckan/dataset?q=plateau" target="_blank">G 空間情報センター</a>／国土交通省／CC BY 4.0</p>
+  <p class="small" data-i18n="index.colophon.small2">配信：290 万棟 を PMTiles に圧縮（48 MB）。基礎図：MapLibre GL JS 4.7　·　明朝：Hiragino Mincho ProN　·　台東区は 2023 年度データセットが未公開のため除外。</p>
+  <p class="small" data-i18n="index.colophon.small3" data-i18n-html>プロジェクト概要は <a href="./about">about</a>。自由探索モードは <a href="./explore">explore</a>。データ交差分析（× UpgradeMap）は <a href="./cross">cross</a>。A3 横の印刷版 PDF：<a href="./tokyo-strata.pdf" download>tokyo-strata.pdf</a>（10 ページ・6.9 MB）</p>
+  <p class="small" style="margin-top: 32px; letter-spacing: 4px;"><span data-i18n="common.footer.credit">Edited &amp; developed by</span>　<b style="color: #b0aca4; font-weight: 400;">Jada Q</b>　·　2026</p>
 </section>
 
+<script src="./i18n/strings.js"></script>
+<script src="./i18n/i18n.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
 <script>
@@ -457,12 +593,29 @@ function loadBuildingLayers(map) {
 
 let landmarks = null;
 
-function addLandmarkLabels(map, bbox) {
+// Tier-1 landmarks — only these are shown on the wide intro overview map,
+// to keep the 22-ward shot legible. Ward zoom maps still show everything in bbox.
+const OVERVIEW_TIER1 = new Set([
+  '皇居',
+  '東京スカイツリー',
+  '東京タワー',
+  '羽田空港',
+  '明治神宮',
+  '上野公園',
+  '新宿御苑',
+  '隅田川',
+  '荒川',
+  '多摩川',
+]);
+
+function addLandmarkLabels(map, bbox, mode) {
   if (!landmarks || !landmarks.landmarks) return;
+  const overview = mode === 'overview';
   for (const lm of landmarks.landmarks) {
     if (bbox && (lm.lng < bbox[0] || lm.lng > bbox[2] || lm.lat < bbox[1] || lm.lat > bbox[3])) {
       continue;  // outside this map's bounds — skip
     }
+    if (overview && lm.type !== 'palace' && !OVERVIEW_TIER1.has(lm.name)) continue;
     const el = document.createElement('div');
     if (lm.type === 'palace') {
       el.className = 'palace-label';
@@ -480,13 +633,14 @@ function fillDataCard(card, ward) {
   const s = stats[ward];
   const total = s.count;
   const pct = (k) => Math.round(1000 * s.strata[k] / total) / 10;
+  const t = (k, fb) => (window.I18N && I18N.get(k)) || fb;
 
   card.innerHTML = `
-    <span class="k">建物</span>
-    <span class="v"><b>${total.toLocaleString()}</b> 棟</span>
-    <span class="k">平均高</span>
+    <span class="k">${t('index.card.buildings', '建物')}</span>
+    <span class="v"><b>${total.toLocaleString()}</b> ${t('index.card.tou', '棟')}</span>
+    <span class="k">${t('index.card.avgheight', '平均高')}</span>
     <span class="v">${s.avg_height.toFixed(1)} m</span>
-    <span class="k">最高棟</span>
+    <span class="k">${t('index.card.maxheight', '最高棟')}</span>
     <span class="v">${s.max_height.toFixed(1)} m</span>
     <div class="strata-bar">
       <span style="width:${pct('kuchiba')}%; background:${STRATUM_COLORS.kuchiba}"></span>
@@ -495,10 +649,10 @@ function fillDataCard(card, ward) {
       <span style="width:${pct('tsukishiro')}%; background:${STRATUM_COLORS.tsukishiro}"></span>
     </div>
     <div class="strata-bar-legend">
-      <span>朽葉 ${pct('kuchiba')}%</span>
-      <span>利休茶 ${pct('rikyu')}%</span>
-      <span>銀鼠 ${pct('ginnezu')}%</span>
-      <span>月白 ${pct('tsukishiro')}%</span>
+      <span>${t('common.palette.kuchiba.name', '朽葉')} ${pct('kuchiba')}%</span>
+      <span>${t('common.palette.rikyu.name', '利休茶')} ${pct('rikyu')}%</span>
+      <span>${t('common.palette.ginnezu.name', '銀鼠')} ${pct('ginnezu')}%</span>
+      <span>${t('common.palette.tsukishiro.name', '月白')} ${pct('tsukishiro')}%</span>
     </div>
   `;
 }
@@ -512,6 +666,7 @@ async function initWardMap(wardId) {
   initialized.add(wardId);
   const s = stats[wardId];
   const map = makeMap(`map-${wardId}`, s.bbox);
+  map._bbox = s.bbox;  // stash for print resize re-fit
   wardMaps[wardId] = map;
   return new Promise(resolve => {
     map.on('load', () => {
@@ -530,31 +685,90 @@ async function initIntroMap() {
   // 22-ward bbox from PMTiles metadata
   const fullBbox = [139.5621, 35.5234, 139.9175, 35.8174];
   const map = makeMap('map-intro', fullBbox);
+  map._bbox = fullBbox;  // stash for print resize re-fit
   introMapInst = map;
   return new Promise(resolve => {
     map.on('load', () => {
       loadBuildingLayers(map);
-      addLandmarkLabels(map, null);  // null bbox = show all
+      addLandmarkLabels(map, null, 'overview');  // overview = tier-1 only
       map.once('idle', () => resolve(map));
     });
   });
 }
 
+// Helper: list every map instance (intro + ward maps).
+function allMaps() {
+  return [introMapInst, ...Object.values(wardMaps)].filter(Boolean);
+}
+
+function resizeAllMaps() {
+  for (const m of allMaps()) {
+    try {
+      m.resize();
+      if (m._bbox) m.fitBounds(m._bbox, { padding: 40, animate: false });
+    } catch (e) {}
+  }
+}
+
+// afterprint: restore canvas to screen dimensions after the print dialog closes.
+window.addEventListener('afterprint', resizeAllMaps);
+
 window.preparePrint = async function () {
   const btn = document.getElementById('print-btn');
-  btn.textContent = 'LOADING ALL MAPS...';
+  const t = (k, fb) => (window.I18N && I18N.get(k)) || fb;
+  btn.textContent = t('index.print.loading', 'LOADING ALL MAPS...');
   btn.disabled = true;
+
+  // The container divs we'll temporarily resize to print dimensions
+  const containers = [
+    document.getElementById('map-intro'),
+    ...REGIONS.map(r => document.getElementById(`map-${r.id}`)),
+  ].filter(Boolean);
+
+  // Save current screen styles so we can restore on afterprint
+  const originalStyles = containers.map(c => ({ width: c.style.width, height: c.style.height }));
+  let restored = false;
+  const restore = () => {
+    if (restored) return;
+    restored = true;
+    containers.forEach((c, i) => {
+      c.style.width = originalStyles[i].width;
+      c.style.height = originalStyles[i].height;
+    });
+    resizeAllMaps();
+    window.removeEventListener('afterprint', restore);
+  };
+  window.addEventListener('afterprint', restore);
+
   try {
     await initIntroMap();
     for (const r of REGIONS) {
       await initWardMap(r.id);
     }
-    // small extra time for any remaining tile/layer rendering
-    await new Promise(res => setTimeout(res, 1200));
-    btn.textContent = 'PRINTING...';
+
+    // Force containers to A3-landscape print dimensions BEFORE window.print():
+    // 260mm × 297mm == 983 × 1123 CSS px @ 96dpi, matching the print stylesheet.
+    // Maps re-render their canvas at this size now, so the print snapshot is sharp.
+    containers.forEach(c => {
+      c.style.width = '260mm';
+      c.style.height = '297mm';
+    });
+    for (const m of allMaps()) {
+      m.resize();
+      if (m._bbox) m.fitBounds(m._bbox, { padding: 40, animate: false });
+    }
+    // Wait for every map to finish redrawing tiles at print resolution
+    await Promise.all(allMaps().map(m => new Promise(res => m.once('idle', res))));
+    // Extra padding for label markers / paint commit
+    await new Promise(res => setTimeout(res, 600));
+
+    btn.textContent = t('index.print.printing', 'PRINTING...');
     window.print();
+
+    // Some browsers (Safari) don't fire afterprint reliably — fallback timer
+    setTimeout(restore, 6000);
   } finally {
-    btn.textContent = 'PRINT · A3';
+    btn.textContent = t('index.print.btn', 'PRINT · A3');
     btn.disabled = false;
   }
 };
@@ -579,6 +793,12 @@ window.preparePrint = async function () {
   // Fill all data cards now
   document.querySelectorAll('[data-ward-stats]').forEach(card => {
     fillDataCard(card, card.dataset.wardStats);
+  });
+  // Re-fill on language change (data card is JS-rendered, not data-i18n)
+  document.addEventListener('lang:changed', () => {
+    document.querySelectorAll('[data-ward-stats]').forEach(card => {
+      fillDataCard(card, card.dataset.wardStats);
+    });
   });
 
   // IntersectionObserver for lazy map init
