@@ -186,9 +186,10 @@
     position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 50;
     display: flex; flex-direction: column; gap: 14px;
     font-size: 10px; letter-spacing: 2px; color: #444;
+    text-shadow: 0 0 8px #0a0a0a, 0 0 4px #0a0a0a;
   }
   #toc a { display: flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; }
-  #toc a::before { content: ''; width: 18px; height: 1px; background: currentColor; }
+  #toc a::before { content: ''; width: 18px; height: 1px; background: currentColor; box-shadow: 0 0 4px #0a0a0a; }
   #toc a:hover { color: #d8d2c8; }
   #toc a.active { color: #e8e4dc; }
   #toc a.active::before { background: #e8e4dc; }
