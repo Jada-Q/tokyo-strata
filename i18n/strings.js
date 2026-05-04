@@ -697,4 +697,10 @@ window.I18N_STRINGS = {
     en: '<b>2.9M buildings</b><br>PLATEAU · Tokyo 22 wards · 2023–24<br><span style="font-size:9px;letter-spacing:3px;color:#666;">by Jada Q · 2026</span>',
   },
 
+  'explore.tooltip.fp.1001': { ja: '耐火構造',     zh: '耐火结构',   en: 'Fire-resistant' },
+  'explore.tooltip.fp.1002': { ja: '準耐火造',     zh: '准耐火',     en: 'Semi-resistant' },
+  'explore.tooltip.fp.1003': { ja: 'その他',       zh: '其他',       en: 'Other'          },
+  'explore.tooltip.fp.1011': { ja: '不明',         zh: '不明',       en: 'Unknown'        },
+  'explore.tooltip.height': { ja: '高度',           zh: '高度',       en: 'Height'         },
+
 };

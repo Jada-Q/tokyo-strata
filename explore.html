@@ -115,6 +115,36 @@
   #lang-menu button:hover { color: #d8d2c8; background: rgba(255,255,255,0.04); }
   #lang-menu button.active { color: #e8e4dc; }
 
+  /* Building tooltip — editorial dark popup */
+  .maplibregl-popup { max-width: 280px !important; }
+  .maplibregl-popup-tip { display: none !important; }
+  .maplibregl-popup-content {
+    background: rgba(10,10,10,0.92) !important;
+    border: 1px solid #2a2622;
+    padding: 14px 18px 12px !important;
+    box-shadow: 0 0 24px rgba(0,0,0,0.6) !important;
+    border-radius: 0 !important;
+    color: #c8c4be;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    backdrop-filter: blur(6px);
+  }
+  html[lang="zh-CN"] .maplibregl-popup-content {
+    font-family: 'Songti SC', 'STSong', 'Source Han Serif SC', 'Noto Serif CJK SC', '宋体', SimSun, 'Hiragino Mincho ProN', serif;
+  }
+  .maplibregl-popup-close-button {
+    color: #6b6660 !important; font-size: 18px !important;
+    padding: 0 6px !important; line-height: 1 !important;
+    top: 4px !important; right: 4px !important;
+  }
+  .maplibregl-popup-close-button:hover { color: #e8e4dc !important; background: transparent !important; }
+  .ts-pop-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .ts-pop-swatch { width: 12px; height: 12px; flex-shrink: 0; }
+  .ts-pop-name { font-size: 13px; letter-spacing: 4px; color: #e8e4dc; }
+  .ts-pop-desc { font-size: 11px; line-height: 1.7; color: #b0aca4; letter-spacing: 0.5px; }
+  .ts-pop-rule { border: 0; height: 1px; background: #2a2622; margin: 10px 0 8px; }
+  .ts-pop-meta { font-size: 10px; letter-spacing: 2px; color: #777; line-height: 1.6; }
+  .ts-pop-meta b { color: #b0aca4; font-weight: 400; }
+
   /* Mobile */
   @media (max-width: 768px) {
     #title { top: 18px; left: 20px; font-size: 9px; letter-spacing: 4px; }
@@ -239,6 +269,66 @@ map.on('load', async () => {
   new maplibregl.Marker({ element: palaceEl, anchor: 'center' })
     .setLngLat([139.7528, 35.6852])
     .addTo(map);
+
+  // Building click → editorial popup
+  const STRATUM = [
+    { key: 'kuchiba',    swatch: '#6e4c30', match: (fp, h) => (fp === '1003' || fp === '1011') && h < 10 },
+    { key: 'rikyu',      swatch: '#b19a55', match: (fp, h) => (fp === '1001' || fp === '1002') && h < 10 },
+    { key: 'ginnezu',    swatch: '#9d9c9d', match: (fp, h) => h >= 10 && h < 30 },
+    { key: 'tsukishiro', swatch: '#e8ecef', match: (fp, h) => h >= 30 },
+  ];
+  let activePopup = null;
+
+  function classify(fp, h) {
+    return STRATUM.find(s => s.match(fp, h)) || { key: null, swatch: '#3a3a3a' };
+  }
+
+  function popupHTML(props) {
+    const fp = (props.fp ?? '').toString();
+    const h = Number(props.h ?? 0);
+    const stratum = classify(fp, h);
+    const t = (k) => (window.I18N && window.I18N.get(k)) || '';
+    const name = stratum.key ? t(`common.palette.${stratum.key}.name`) : '—';
+    const desc = stratum.key ? t(`about.palette.${stratum.key}.desc`) : '';
+    const fpLabel = t(`explore.tooltip.fp.${fp}`) || (fp ? fp : '—');
+    const heightLabel = t('explore.tooltip.height') || 'h';
+    const hStr = h > 0 ? `${h.toFixed(1)} m` : '—';
+    return `
+      <div class="ts-pop-head">
+        <span class="ts-pop-swatch" style="background:${stratum.swatch}"></span>
+        <span class="ts-pop-name">${name}</span>
+      </div>
+      <div class="ts-pop-desc">${desc}</div>
+      <hr class="ts-pop-rule">
+      <div class="ts-pop-meta">${fpLabel}　·　${heightLabel} <b>${hStr}</b></div>
+    `;
+  }
+
+  map.on('click', 'bldg-fill', (e) => {
+    if (!e.features || !e.features.length) return;
+    if (activePopup) activePopup.remove();
+    const props = e.features[0].properties || {};
+    activePopup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, offset: 12, maxWidth: '280px' })
+      .setLngLat(e.lngLat)
+      .setHTML(popupHTML(props))
+      .addTo(map);
+  });
+
+  map.on('mouseenter', 'bldg-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'bldg-fill', () => { map.getCanvas().style.cursor = ''; });
+
+  // Re-render popup on language change so labels follow lang
+  if (window.I18N && window.I18N.onChange) {
+    window.I18N.onChange(() => {
+      if (activePopup && activePopup.isOpen()) {
+        const lngLat = activePopup.getLngLat();
+        const features = map.queryRenderedFeatures(map.project(lngLat), { layers: ['bldg-fill'] });
+        if (features && features.length) {
+          activePopup.setHTML(popupHTML(features[0].properties || {}));
+        }
+      }
+    });
+  }
 });
 </script>
 </body>
