@@ -73,6 +73,31 @@
     pointer-events: none; opacity: 0.85;
     text-shadow: 0 0 8px rgba(0,0,0,0.6);
   }
+  /* Landmark beacons — 3D mode only */
+  .lm-beacon {
+    display: flex; flex-direction: column; align-items: center;
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  body.mode-3d .lm-beacon { opacity: 1; }
+  body.mode-3d .lm-name { pointer-events: auto; cursor: pointer; }
+  body.mode-3d .lm-name:hover { color: #fff8e6; }
+  .lm-name {
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    writing-mode: vertical-rl; text-orientation: upright;
+    color: #efe6cd; font-size: 12px; letter-spacing: 5px;
+    text-shadow: 0 0 3px #000, 0 0 8px rgba(0,0,0,0.95), 0 1px 2px #000;
+    margin-bottom: 4px;
+  }
+  .lm-line {
+    width: 1px; height: 64px;
+    background: linear-gradient(to top, rgba(239,230,205,0.95), rgba(239,230,205,0));
+  }
+  .lm-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: #efe6cd; box-shadow: 0 0 8px rgba(239,230,205,0.9);
+  }
+
   #count {
     position: absolute; bottom: 40px; right: 40px; z-index: 5;
     font-size: 10px; color: #555; letter-spacing: 1.5px;
@@ -224,7 +249,19 @@
 <script src="./i18n/i18n.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+window.__threeReady({ THREE, GLTFLoader });
+</script>
 <script>
+const threeReady = new Promise((res) => { window.__threeReady = res; });
 const pmtilesProtocol = new pmtiles.Protocol();
 maplibregl.addProtocol('pmtiles', pmtilesProtocol.tile);
 
@@ -257,10 +294,41 @@ const map = new maplibregl.Map({
 });
 
 map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+window._strataMap = map;
+map.on('error', (e) => console.error('map error:', (e.error && e.error.message) || e.error));
 
 map.on('load', async () => {
   // count is now hydrated by i18n via data-i18n on #count
   map.addSource('bldg', { type: 'vector', url: 'pmtiles://./data/tokyo.pmtiles' });
+  map.addSource('roads', { type: 'vector', url: 'pmtiles://./tiles/roads.pmtiles' });
+
+  // major roads: skeleton of the city, kept a half-step above ground darkness
+  map.addLayer({
+    id: 'road-line', type: 'line', source: 'roads', 'source-layer': 'roads',
+    filter: ['!=', ['get', 'c'], 'rail'],
+    paint: {
+      'line-color': [
+        'match', ['get', 'c'],
+        'motorway', '#3a322a',
+        'trunk', '#342d25',
+        '#2b2520'
+      ],
+      'line-width': [
+        'interpolate', ['linear'], ['zoom'],
+        9, ['match', ['get', 'c'], 'motorway', 1.4, 'trunk', 1.1, 0.6],
+        14, ['match', ['get', 'c'], 'motorway', 5.0, 'trunk', 4.0, 2.4]
+      ],
+    },
+  });
+  map.addLayer({
+    id: 'rail-line', type: 'line', source: 'roads', 'source-layer': 'roads',
+    filter: ['==', ['get', 'c'], 'rail'],
+    paint: {
+      'line-color': '#453c30',
+      'line-width': ['interpolate', ['linear'], ['zoom'], 9, 0.7, 14, 1.8],
+      'line-dasharray': [3, 2],
+    },
+  });
 
   const STRATA_COLOR = [
     'case',
@@ -293,14 +361,116 @@ map.on('load', async () => {
     paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
   });
 
+  // 3D palette: same strata identity, exposure tuned for lit walls on dark ground
+  // (銀鼠/月白 dimmed ~12% so walls don't blow out against the void)
+  const STRATA_COLOR_3D = [
+    'case',
+    ['all',
+      ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
+      ['<', ['coalesce', ['get', 'h'], 0], 10]
+    ], '#6e4c30',
+    ['all',
+      ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
+      ['<', ['coalesce', ['get', 'h'], 0], 10]
+    ], '#b19a55',
+    ['all',
+      ['>=', ['coalesce', ['get', 'h'], 0], 10],
+      ['<', ['coalesce', ['get', 'h'], 0], 30]
+    ], '#87868a',
+    ['>=', ['coalesce', ['get', 'h'], 0], 30], '#ccd2d8',
+    '#3a3a3a'
+  ];
+
+  // Landmark model definitions + per-site clearing radius (meters, half-width).
+  // Raw PLATEAU extrusions fully inside a site's mask are hidden in 3D so the
+  // stylized glTF model stands alone; 2D layers keep every building untouched.
+  const MODEL_DEFS = [
+    { file: 'tokyo_tower.glb',   lng: 139.745536,  lat: 35.6584491, clear: 80 },
+    { file: 'skytree.glb',       lng: 139.8107141, lat: 35.7100543, clear: 90 },
+    { file: 'kokkai.glb',        lng: 139.7450514, lat: 35.6758864, clear: 160 },
+    { file: 'tokyo_dome.glb',    lng: 139.7519705, lat: 35.7055706, clear: 150 },
+    { file: 'big_sight.glb',     lng: 139.7978048, lat: 35.6320533, clear: 200 },
+    { file: 'tokyo_station.glb', lng: 139.7645697, lat: 35.6802778, clear: 200 },
+    { file: 'ginza_wako.glb',    lng: 139.7650359, lat: 35.6712197, clear: 45 },
+    { file: 'meiji_torii.glb',   lng: 139.6996266, lat: 35.6748417, clear: 40 },
+    { file: 'haneda.glb',        lng: 139.7760994, lat: 35.5456924, clear: 260 },
+    { file: 'shinagawa.glb',     lng: 139.730198,  lat: 35.6092112, clear: 150 },
+    { file: 'ikebukuro.glb',     lng: 139.7084087, lat: 35.7312289, clear: 140 },
+  ];
+  function maskAround(lng, lat, half) {
+    const mlat = 111320, mlon = 111320 * Math.cos(lat * Math.PI / 180);
+    const dx = half / mlon, dy = half / mlat;
+    return [[
+      [lng - dx, lat - dy], [lng + dx, lat - dy],
+      [lng + dx, lat + dy], [lng - dx, lat + dy], [lng - dx, lat - dy],
+    ]];
+  }
+  const LM_MASK = {
+    type: 'MultiPolygon',
+    coordinates: MODEL_DEFS.map((d) => maskAround(d.lng, d.lat, d.clear)),
+  };
+
   map.addLayer({
     id: 'bldg-3d', type: 'fill-extrusion', source: 'bldg', 'source-layer': 'buildings',
     layout: { visibility: 'none' },
+    // spatial mask for ordinary landmarks + exact-height exclusion for the two
+    // towers whose footprints exceed any reasonable mask (東京タワー/スカイツリー)
+    filter: ['all',
+      ['!', ['within', LM_MASK]],
+      ['!=', ['get', 'h'], 332.12],
+      ['!=', ['get', 'h'], 634.9],
+    ],
     paint: {
-      'fill-extrusion-color': STRATA_COLOR,
+      'fill-extrusion-color': STRATA_COLOR_3D,
       'fill-extrusion-height': ['coalesce', ['get', 'h'], 3],
       'fill-extrusion-base': 0,
       'fill-extrusion-opacity': 0.95,
+      'fill-extrusion-vertical-gradient': true,
+    },
+  });
+
+  // oblique warm light so extrusion faces separate (affects 3D layer only)
+  map.setLight({ anchor: 'map', position: [1.15, 250, 55], color: '#fff2e0', intensity: 0.55 });
+
+  // Landmark models: stylized low-poly glTF (Blender-built, artistic inference)
+  // anchored at real landmarks.json coordinates. Rendered via three.js custom
+  // layer sharing MapLibre's depth buffer (renderingMode: '3d').
+  let lmModelsVisible = false;
+  const { THREE, GLTFLoader } = await threeReady;
+  map.addLayer({
+    id: 'lm-models', type: 'custom', renderingMode: '3d',
+    onAdd(mapArg, gl) {
+      this.camera = new THREE.Camera();
+      this.scene = new THREE.Scene();
+      this.scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      const dir = new THREE.DirectionalLight(0xfff2e0, 1.5);
+      dir.position.set(0.5, -0.9, 1.2);
+      this.scene.add(dir);
+      const loader = new GLTFLoader();
+      for (const d of MODEL_DEFS) {
+        loader.load('./models/' + d.file, (g) => {
+          const merc = maplibregl.MercatorCoordinate.fromLngLat([d.lng, d.lat], 0);
+          const s = merc.meterInMercatorCoordinateUnits();
+          const grp = g.scene;
+          grp.matrixAutoUpdate = false;
+          grp.matrix = new THREE.Matrix4()
+            .makeTranslation(merc.x, merc.y, merc.z)
+            .scale(new THREE.Vector3(s, -s, s))
+            .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+          this.scene.add(grp);
+          mapArg.triggerRepaint();
+        }, undefined, (err) => console.error('model load failed:', d.file, err));
+      }
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: mapArg.getCanvas(), context: gl, antialias: true,
+      });
+      this.renderer.autoClear = false;
+    },
+    render(gl, matrix) {
+      if (!lmModelsVisible) return;
+      this.camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
+      this.renderer.resetState();
+      this.renderer.render(this.scene, this.camera);
     },
   });
 
@@ -309,8 +479,11 @@ map.on('load', async () => {
   const btn3d = document.getElementById('mode-3d');
   function setMode(is3d) {
     map.setLayoutProperty('bldg-3d', 'visibility', is3d ? 'visible' : 'none');
+    lmModelsVisible = is3d;
+    map.triggerRepaint();
     map.setLayoutProperty('bldg-fill', 'visibility', is3d ? 'none' : 'visible');
     map.setLayoutProperty('bldg-outline', 'visibility', is3d ? 'none' : 'visible');
+    map.setPaintProperty('bg', 'background-color', is3d ? '#16130f' : '#0a0a0a');
     btn3d.classList.toggle('active', is3d);
     btn2d.classList.toggle('active', !is3d);
     btn3d.setAttribute('aria-pressed', String(is3d));
@@ -328,6 +501,25 @@ map.on('load', async () => {
   new maplibregl.Marker({ element: palaceEl, anchor: 'center' })
     .setLngLat([139.7528, 35.6852])
     .addTo(map);
+
+  // Landmark beacons (3D mode only, via body.mode-3d CSS)
+  try {
+    const lm = await (await fetch('./data/landmarks.json')).json();
+    const items = (Array.isArray(lm) ? lm : lm.landmarks || []).filter(
+      (l) => ['other', 'shrine', 'airport'].includes(l.type)
+    );
+    for (const l of items) {
+      const el = document.createElement('div');
+      el.className = 'lm-beacon';
+      el.innerHTML = `<span class="lm-name">${l.name}</span><span class="lm-line"></span><span class="lm-dot"></span>`;
+      el.querySelector('.lm-name').addEventListener('click', () => {
+        map.flyTo({ center: [l.lng, l.lat], zoom: 15, pitch: 60, duration: 2200 });
+      });
+      new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([l.lng, l.lat])
+        .addTo(map);
+    }
+  } catch (e) { console.warn('landmarks skipped:', e); }
 
   // Building click → editorial popup
   const STRATUM = [
