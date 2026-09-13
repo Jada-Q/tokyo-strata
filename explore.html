@@ -82,6 +82,23 @@
   #count b { color: #888; }
   .maplibregl-ctrl-attrib { display: none !important; }
 
+  /* 2D / 3D mode switch */
+  #mode-switch {
+    position: absolute; bottom: 96px; right: 40px; z-index: 6;
+    display: flex;
+    border: 1px solid #2a2622;
+    background: rgba(10,10,10,0.72);
+    backdrop-filter: blur(4px);
+  }
+  #mode-switch button {
+    background: transparent; border: none; cursor: pointer;
+    color: #6b6660; font-family: inherit;
+    font-size: 11px; letter-spacing: 3px;
+    padding: 8px 14px 8px 17px; line-height: 1;
+  }
+  #mode-switch button.active { color: #e8e4dc; background: rgba(255,255,255,0.06); }
+  #mode-switch button:hover { color: #d8d2c8; }
+
   /* Language switcher — kebab menu */
   #lang-switch {
     position: absolute; top: 26px; right: 32px; z-index: 6;
@@ -164,6 +181,8 @@
       bottom: 24px; right: 20px;
       font-size: 9px; letter-spacing: 1px;
     }
+    #mode-switch { bottom: 88px; right: 20px; }
+    #mode-switch button { padding: 7px 11px 7px 13px; font-size: 10px; letter-spacing: 2px; }
     #lang-switch { top: 14px; right: 14px; }
     #lang-toggle { font-size: 18px; padding: 4px 6px; }
     #lang-menu { min-width: 88px; }
@@ -190,6 +209,10 @@
   <div><span class="swatch" style="background:#e8ecef"></span><span class="cname" data-i18n="common.palette.tsukishiro.name">月白</span><span class="cdesc" data-i18n="common.palette.tsukishiro.desc">現代の塔</span></div>
 </div>
 <div id="count" data-i18n="explore.count.html" data-i18n-html></div>
+<div id="mode-switch" role="group" aria-label="View mode">
+  <button id="mode-2d" class="active" aria-pressed="true">2D</button>
+  <button id="mode-3d" aria-pressed="false">3D</button>
+</div>
 <div id="map"></div>
 <script src="./i18n/strings.js"></script>
 <script src="./i18n/i18n.js"></script>
@@ -233,26 +256,28 @@ map.on('load', async () => {
   // count is now hydrated by i18n via data-i18n on #count
   map.addSource('bldg', { type: 'vector', url: 'pmtiles://./data/tokyo.pmtiles' });
 
+  const STRATA_COLOR = [
+    'case',
+    ['all',
+      ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
+      ['<', ['coalesce', ['get', 'h'], 0], 10]
+    ], '#6e4c30',
+    ['all',
+      ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
+      ['<', ['coalesce', ['get', 'h'], 0], 10]
+    ], '#b19a55',
+    ['all',
+      ['>=', ['coalesce', ['get', 'h'], 0], 10],
+      ['<', ['coalesce', ['get', 'h'], 0], 30]
+    ], '#9d9c9d',
+    ['>=', ['coalesce', ['get', 'h'], 0], 30], '#e8ecef',
+    '#3a3a3a'
+  ];
+
   map.addLayer({
     id: 'bldg-fill', type: 'fill', source: 'bldg', 'source-layer': 'buildings',
     paint: {
-      'fill-color': [
-        'case',
-        ['all',
-          ['any', ['==', ['get', 'fp'], '1003'], ['==', ['get', 'fp'], '1011']],
-          ['<', ['coalesce', ['get', 'h'], 0], 10]
-        ], '#6e4c30',
-        ['all',
-          ['any', ['==', ['get', 'fp'], '1001'], ['==', ['get', 'fp'], '1002']],
-          ['<', ['coalesce', ['get', 'h'], 0], 10]
-        ], '#b19a55',
-        ['all',
-          ['>=', ['coalesce', ['get', 'h'], 0], 10],
-          ['<', ['coalesce', ['get', 'h'], 0], 30]
-        ], '#9d9c9d',
-        ['>=', ['coalesce', ['get', 'h'], 0], 30], '#e8ecef',
-        '#3a3a3a'
-      ],
+      'fill-color': STRATA_COLOR,
       'fill-opacity': 0.92,
     },
   });
@@ -261,6 +286,33 @@ map.on('load', async () => {
     id: 'bldg-outline', type: 'line', source: 'bldg', 'source-layer': 'buildings',
     paint: { 'line-color': '#0a0a0a', 'line-width': 0.3 }
   });
+
+  map.addLayer({
+    id: 'bldg-3d', type: 'fill-extrusion', source: 'bldg', 'source-layer': 'buildings',
+    layout: { visibility: 'none' },
+    paint: {
+      'fill-extrusion-color': STRATA_COLOR,
+      'fill-extrusion-height': ['coalesce', ['get', 'h'], 3],
+      'fill-extrusion-base': 0,
+      'fill-extrusion-opacity': 0.95,
+    },
+  });
+
+  // 2D / 3D mode switch
+  const btn2d = document.getElementById('mode-2d');
+  const btn3d = document.getElementById('mode-3d');
+  function setMode(is3d) {
+    map.setLayoutProperty('bldg-3d', 'visibility', is3d ? 'visible' : 'none');
+    map.setLayoutProperty('bldg-fill', 'visibility', is3d ? 'none' : 'visible');
+    map.setLayoutProperty('bldg-outline', 'visibility', is3d ? 'none' : 'visible');
+    btn3d.classList.toggle('active', is3d);
+    btn2d.classList.toggle('active', !is3d);
+    btn3d.setAttribute('aria-pressed', String(is3d));
+    btn2d.setAttribute('aria-pressed', String(!is3d));
+    map.easeTo(is3d ? { pitch: 55, duration: 900 } : { pitch: 0, bearing: 0, duration: 900 });
+  }
+  btn2d.addEventListener('click', () => setMode(false));
+  btn3d.addEventListener('click', () => setMode(true));
 
   // 皇居 label
   const palaceEl = document.createElement('div');
@@ -304,25 +356,26 @@ map.on('load', async () => {
     `;
   }
 
-  map.on('click', 'bldg-fill', (e) => {
-    if (!e.features || !e.features.length) return;
-    if (activePopup) activePopup.remove();
-    const props = e.features[0].properties || {};
-    activePopup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, offset: 12, maxWidth: '280px' })
-      .setLngLat(e.lngLat)
-      .setHTML(popupHTML(props))
-      .addTo(map);
-  });
-
-  map.on('mouseenter', 'bldg-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
-  map.on('mouseleave', 'bldg-fill', () => { map.getCanvas().style.cursor = ''; });
+  for (const layerId of ['bldg-fill', 'bldg-3d']) {
+    map.on('click', layerId, (e) => {
+      if (!e.features || !e.features.length) return;
+      if (activePopup) activePopup.remove();
+      const props = e.features[0].properties || {};
+      activePopup = new maplibregl.Popup({ closeButton: true, closeOnClick: true, offset: 12, maxWidth: '280px' })
+        .setLngLat(e.lngLat)
+        .setHTML(popupHTML(props))
+        .addTo(map);
+    });
+    map.on('mouseenter', layerId, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', layerId, () => { map.getCanvas().style.cursor = ''; });
+  }
 
   // Re-render popup on language change so labels follow lang
   if (window.I18N && window.I18N.onChange) {
     window.I18N.onChange(() => {
       if (activePopup && activePopup.isOpen()) {
         const lngLat = activePopup.getLngLat();
-        const features = map.queryRenderedFeatures(map.project(lngLat), { layers: ['bldg-fill'] });
+        const features = map.queryRenderedFeatures(map.project(lngLat), { layers: ['bldg-fill', 'bldg-3d'] });
         if (features && features.length) {
           activePopup.setHTML(popupHTML(features[0].properties || {}));
         }
