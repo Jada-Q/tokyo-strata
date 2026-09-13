@@ -82,6 +82,12 @@
   #count b { color: #888; }
   .maplibregl-ctrl-attrib { display: none !important; }
 
+  /* 3D mode: translucent backdrop keeps overlays legible over bright towers */
+  body.mode-3d #title, body.mode-3d #subtitle, body.mode-3d #legend, body.mode-3d #count {
+    background: rgba(10,10,10,0.72);
+    padding: 8px 12px;
+  }
+
   /* 2D / 3D mode switch */
   #mode-switch {
     position: absolute; bottom: 96px; right: 40px; z-index: 6;
@@ -309,6 +315,7 @@ map.on('load', async () => {
     btn2d.classList.toggle('active', !is3d);
     btn3d.setAttribute('aria-pressed', String(is3d));
     btn2d.setAttribute('aria-pressed', String(!is3d));
+    document.body.classList.toggle('mode-3d', is3d);
     map.easeTo(is3d ? { pitch: 55, duration: 900 } : { pitch: 0, bearing: 0, duration: 900 });
   }
   btn2d.addEventListener('click', () => setMode(false));
